@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AUREA BLACK BOX - Institutional Trading Framework</title>
+    <style>
+        /* ═══════════════════════════════════════════════════════════
+           VARIABLES EDITABLES
+           ═══════════════════════════════════════════════════════════ */
+        :root {
+            --aurea-gold: #d4af37;
+            --aurea-gold-dark: #c8993a;
+            --deep-black: #0a0a0a;
+            --dark-gray: #1a1a1a;
+            --border-gray: #2a2a2a;
+            --text-gray: #b0b0b0;
+            --success-green: #00ff88;
+            --danger-red: #ff4444;
+            --warning-yellow: #ffaa00;
+            
+            --font-main: 'Courier New', monospace;
+            --font-condensed: 'Arial Narrow', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-main);
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            color: var(--text-gray);
+            line-height: 1.6;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           LANDING PAGE & HERO
+           ═══════════════════════════════════════════════════════════ */
+        #landing-page { min-height: 100vh; display: flex; flex-direction: column; }
+        .landing-hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; padding: 2rem; background: radial-gradient(ellipse at center, rgba(212, 175, 55, 0.03) 0%, transparent 70%), linear-gradient(135deg, var(--deep-black) 0%, #0f1419 100%); }
+        .landing-hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(212, 175, 55, 0.03) 2px, rgba(212, 175, 55, 0.03) 4px); pointer-events: none; }
+        .logo-container { margin-bottom: 2rem; animation: fadeInDown 1s ease-out; }
+        .logo-image { max-width: 400px; width: 90%; height: auto; filter: drop-shadow(0 0 30px rgba(212, 175, 55, 0.4)); }
+        .hero-title { font-size: 3.5rem; font-weight: 700; color: var(--aurea-gold); text-align: center; letter-spacing: 4px; margin-bottom: 1rem; text-transform: uppercase; font-family: var(--font-condensed); animation: fadeInUp 1s ease-out 0.2s both; }
+        .hero-subtitle { font-size: 1.2rem; color: var(--text-gray); text-align: center; letter-spacing: 2px; margin-bottom: 0.5rem; text-transform: uppercase; animation: fadeInUp 1s ease-out 0.4s both; }
+        .hero-tagline { font-size: 1rem; color: var(--aurea-gold-dark); text-align: center; font-style: italic; margin-bottom: 3rem; animation: fadeInUp 1s ease-out 0.6s both; }
+        
+        .cta-buttons { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; animation: fadeInUp 1s ease-out 0.8s both; }
+        .btn { padding: 1rem 2.5rem; font-family: var(--font-main); font-size: 0.9rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; border: 2px solid; background: transparent; cursor: pointer; transition: all 0.3s ease; text-decoration: none; display: inline-block; text-align: center; }
+        .btn-primary { border-color: var(--aurea-gold); color: var(--aurea-gold); }
+        .btn-primary:hover { background: var(--aurea-gold); color: var(--deep-black); box-shadow: 0 0 20px rgba(212, 175, 55, 0.5); }
+        .btn-secondary { border-color: var(--text-gray); color: var(--text-gray); }
+        .btn-secondary:hover { border-color: var(--aurea-gold); color: var(--aurea-gold); }
+
+        /* Features Section */
+        .features-section { max-width: 1400px; margin: 0 auto; padding: 6rem 2rem; }
+        .section-header { text-align: center; margin-bottom: 4rem; }
+        .section-title { font-size: 2.5rem; color: var(--aurea-gold); font-family: var(--font-condensed); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 1rem; }
+        .section-subtitle { font-size: 1rem; color: var(--text-gray); font-style: italic; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+        .feature-card { background: rgba(26, 26, 26, 0.8); border: 1px solid var(--border-gray); border-left: 4px solid var(--aurea-gold); padding: 2rem; transition: all 0.3s ease; }
+        .feature-card:hover { border-left-width: 6px; box-shadow: 0 4px 20px rgba(212, 175, 55, 0.1); }
+        .feature-icon { font-size: 3rem; margin-bottom: 1rem; }
+        .feature-title { font-size: 1.3rem; color: var(--aurea-gold); font-family: var(--font-condensed); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 1rem; }
+        .feature-desc { color: var(--text-gray); line-height: 1.8; }
+
+        /* Pricing Section */
+        .pricing-section { max-width: 1200px; margin: 0 auto; padding: 6rem 2rem; }
+        .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; align-items: center; }
+        .pricing-card { background: rgba(26, 26, 26, 0.8); border: 1px solid var(--border-gray); padding: 3rem 2rem; border-radius: 4px; text-align: center; position: relative; transition: all 0.3s ease; }
+        .pricing-card:hover { border-color: var(--aurea-gold); transform: translateY(-5px); }
+        .pricing-card.featured { background: linear-gradient(135deg, var(--aurea-gold) 0%, var(--aurea-gold-dark) 100%); border: none; transform: scale(1.05); z-index: 10; box-shadow: 0 10px 40px rgba(212, 175, 55, 0.2); }
+        .pricing-card.featured:hover { transform: scale(1.05) translateY(-5px); }
+        .popular-badge { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: var(--deep-black); color: var(--aurea-gold); padding: 0.5rem 1rem; font-size: 0.75rem; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; border: 1px solid var(--aurea-gold); border-radius: 20px; }
+        .pricing-tier { font-family: var(--font-condensed); color: var(--aurea-gold); font-size: 1.5rem; letter-spacing: 2px; margin-bottom: 1rem; }
+        .pricing-price { font-size: 3.5rem; font-family: var(--font-main); font-weight: bold; color: white; margin-bottom: 1rem; display: flex; justify-content: center; align-items: baseline; }
+        .pricing-card.featured .pricing-price { color: var(--deep-black); }
+        .currency { font-size: 1.5rem; color: var(--text-gray); margin-right: 0.2rem; }
+        .period { font-size: 1rem; color: var(--text-gray); font-weight: normal; }
+        .pricing-card.featured .currency, .pricing-card.featured .period { color: rgba(0,0,0,0.6); }
+        .pricing-desc { font-size: 0.9rem; color: var(--text-gray); margin-bottom: 2rem; height: 40px; display: flex; align-items: center; justify-content: center; }
+        .pricing-features { list-style: none; text-align: left; margin-bottom: 2rem; }
+        .pricing-features li { padding: 0.8rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; }
+        .pricing-features li:last-child { border-bottom: none; }
+        .pricing-features li.disabled { color: #666; text-decoration: line-through; }
+        .pricing-card.featured .pricing-features li { border-bottom: 1px solid rgba(0,0,0,0.1); color: var(--deep-black); }
+
+        /* FAQ Section */
+        .faq-section { max-width: 900px; margin: 0 auto; padding: 6rem 2rem; }
+        .faq-item { background: rgba(26, 26, 26, 0.8); border: 1px solid var(--border-gray); margin-bottom: 1rem; overflow: hidden; }
+        .faq-question { padding: 1.5rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: background 0.3s ease; }
+        .faq-question:hover { background: rgba(212, 175, 55, 0.05); }
+        .faq-q-text { font-weight: bold; color: var(--aurea-gold); }
+        .faq-toggle { color: var(--aurea-gold); font-size: 1.5rem; }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+        .faq-answer.active { max-height: 500px; }
+        .faq-a-content { padding: 0 1.5rem 1.5rem; color: var(--text-gray); line-height: 1.8; }
+
+        /* ═══════════════════════════════════════════════════════════
+           LOGIN & REGISTER PAGE
+           ═══════════════════════════════════════════════════════════ */
+        #login-page {
+            display: none; min-height: 100vh; justify-content: center; align-items: center; padding: 2rem;
+            background: radial-gradient(ellipse at 50% 0%, #0d1f3c 0%, #060d1a 50%, #020508 100%);
+            position: relative; overflow: hidden;
+        }
+        #login-page::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 50% 30%, rgba(30,80,160,0.15) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .login-container {
+            max-width: 480px; width: 100%; padding: 2.5rem; position: relative; z-index: 1;
+            background: transparent;
+        }
+        .login-logo { text-align: center; margin-bottom: 1.5rem; }
+        .login-logo img { max-width: 180px; filter: drop-shadow(0 0 30px rgba(212,175,55,0.4)) drop-shadow(0 0 60px rgba(30,80,160,0.3)); }
+        .login-title {
+            text-align: center; font-family: var(--font-condensed); font-size: 2.4rem;
+            font-weight: 900; text-transform: uppercase; letter-spacing: 4px; margin-bottom: 0.3rem;
+            background: linear-gradient(135deg, #d4af37 0%, #f5e27a 50%, #c8993a 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .login-subtitle { text-align: center; color: #8a9bb5; font-size: 0.85rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 0.3rem; }
+        .login-tagline { text-align: center; color: #5a6b82; font-size: 0.8rem; font-style: italic; margin-bottom: 2.5rem; }
+        .social-auth { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem; }
+        .social-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 0.85rem; border-radius: 2px; font-family: var(--font-main); font-weight: bold; cursor: pointer; transition: all 0.3s ease; border: 1px solid rgba(100,130,180,0.3); font-size: 0.9rem; background: rgba(8,18,38,0.5); }
+        .btn-google { background: white; color: #333; }
+        .btn-google:hover { background: #f1f1f1; }
+        .btn-apple { background: #000; color: white; border: 1px solid #333; }
+        .btn-apple:hover { background: #111; border-color: #555; }
+        .social-icon { width: 18px; height: 18px; }
+        .auth-divider { display: flex; align-items: center; text-align: center; margin-bottom: 1.5rem; color: var(--text-gray); font-size: 0.8rem; text-transform: uppercase; }
+        .auth-divider::before, .auth-divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--border-gray); }
+        .auth-divider span { padding: 0 10px; }
+        .login-form { display: flex; flex-direction: column; gap: 1.5rem; }
+        .login-input-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        .login-label { color: var(--aurea-gold); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+        .login-input { background: rgba(8,18,38,0.7); border: 1px solid rgba(100,130,180,0.25); color: white; padding: 1rem; font-family: var(--font-main); font-size: 1rem; transition: all 0.3s ease; border-radius: 2px; }
+        .login-input:focus { outline: none; border-color: var(--aurea-gold); box-shadow: 0 0 12px rgba(212,175,55,0.15); background: rgba(8,18,38,0.9); }
+        .login-error { color: var(--danger-red); font-size: 0.85rem; display: none; padding: 0.75rem; background: rgba(255, 68, 68, 0.1); border-left: 3px solid var(--danger-red); margin-bottom: 1rem; }
+        .login-btn {
+            padding: 1rem; width: 100%; background: linear-gradient(135deg, rgba(212,175,55,0.15) 0%, rgba(212,175,55,0.05) 100%);
+            border: 1px solid var(--aurea-gold); color: var(--aurea-gold); font-weight: bold; cursor: pointer;
+            transition: all 0.3s ease; font-family: var(--font-condensed); font-size: 1rem; text-transform: uppercase;
+            letter-spacing: 3px; border-radius: 2px; margin-top: 0.5rem;
+        }
+        .login-btn:hover { background: var(--aurea-gold); color: var(--deep-black); box-shadow: 0 0 25px rgba(212,175,55,0.4); }
+        .auth-switch { text-align: center; margin-top: 1.5rem; font-size: 0.85rem; color: var(--text-gray); }
+        .auth-switch a { color: var(--aurea-gold); text-decoration: none; font-weight: bold; transition: opacity 0.3s; }
+        .auth-switch a:hover { opacity: 0.8; text-decoration: underline; }
+        .back-to-home { text-align: center; margin-top: 1.5rem; }
+        .back-to-home a { color: #3a4b62; text-decoration: none; font-size: 0.8rem; letter-spacing: 1px; transition: color 0.3s; }
+        .back-to-home a:hover { color: #8a9bb5; }
+
+        /* ═══════════════════════════════════════════════════════════
+           DASHBOARD & COMPONENTS
+           ═══════════════════════════════════════════════════════════ */
+        #dashboard-page { display: none; min-height: 100vh; }
+        .dashboard-header { background: rgba(26, 26, 26, 0.95); border-bottom: 2px solid var(--aurea-gold); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
+        .dashboard-logo { display: flex; align-items: center; gap: 1rem; }
+        .dashboard-logo img { height: 40px; }
+        .dashboard-brand { font-family: var(--font-condensed); font-size: 1.5rem; color: var(--aurea-gold); text-transform: uppercase; letter-spacing: 2px; }
+        .dashboard-nav { display: flex; gap: 2rem; align-items: center; }
+        .nav-tabs { display: flex; gap: 1rem; }
+        .nav-tab { padding: 0.75rem 1.5rem; background: transparent; border: none; border-bottom: 3px solid transparent; color: var(--text-gray); font-family: var(--font-condensed); font-size: 0.9rem; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: all 0.3s ease; }
+        .nav-tab:hover { color: var(--aurea-gold); }
+        .nav-tab.active { color: var(--aurea-gold); border-bottom-color: var(--aurea-gold); }
+        .user-menu { display: flex; align-items: center; gap: 1rem; }
+        .user-email { color: var(--text-gray); font-size: 0.85rem; }
+        .logout-btn { padding: 0.5rem 1rem; background: transparent; border: 1px solid var(--danger-red); color: var(--danger-red); font-size: 0.75rem; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px; }
+        .logout-btn:hover { background: var(--danger-red); color: white; }
+        .dashboard-content { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; animation: fadeInUp 0.5s ease-out; }
+        .welcome-card { background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, transparent 100%); border: 2px solid var(--aurea-gold); padding: 2rem; margin-bottom: 2rem; border-radius: 4px; }
+        .welcome-title { font-size: 2rem; color: var(--aurea-gold); font-family: var(--font-condensed); margin-bottom: 0.5rem; }
+        .welcome-subtitle { color: var(--text-gray); font-size: 1rem; }
+
+        .protocol-card { background: rgba(26, 26, 26, 0.8); border: 1px solid var(--border-gray); border-left: 4px solid var(--aurea-gold); padding: 2rem; margin-bottom: 2rem; backdrop-filter: blur(10px); transition: all 0.3s ease; }
+        .protocol-card:hover { border-left-width: 6px; box-shadow: 0 4px 20px rgba(212, 175, 55, 0.1); }
+        .card-title { font-size: 1.3rem; color: var(--aurea-gold); font-family: var(--font-condensed); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+        .card-icon { font-size: 1.5rem; }
+        .card-content { color: var(--text-gray); line-height: 1.8; }
+        .card-content ul { list-style: none; padding-left: 0; }
+        .card-content li { padding: 0.5rem 0; padding-left: 1.5rem; position: relative; }
+        .card-content li::before { content: '▸'; position: absolute; left: 0; color: var(--aurea-gold); }
+        .status-badge { display: inline-block; padding: 0.3rem 0.8rem; border-radius: 2px; font-size: 0.75rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+        .status-active { background: rgba(0, 255, 136, 0.2); color: var(--success-green); border: 1px solid var(--success-green); }
+        .status-warning { background: rgba(255, 170, 0, 0.2); color: var(--warning-yellow); border: 1px solid var(--warning-yellow); }
+        .status-critical { background: rgba(255, 68, 68, 0.2); color: var(--danger-red); border: 1px solid var(--danger-red); }
+
+        .matrix-table { width: 100%; border-collapse: collapse; margin-top: 1rem; background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border-gray); font-size: 0.9rem; }
+        .matrix-table th { text-align: left; padding: 10px; border-bottom: 1px solid var(--aurea-gold-dark); color: var(--aurea-gold); font-family: var(--font-condensed); letter-spacing: 1px; }
+        .matrix-table td { padding: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .text-red { color: var(--danger-red); font-weight: bold; }
+        .text-green { color: var(--success-green); font-weight: bold; }
+        .corr-controls { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; margin-top: 1.5rem; margin-bottom: 1rem; }
+        .corr-input { background: rgba(42, 42, 42, 0.5); border: 1px solid var(--border-gray); color: var(--aurea-gold); padding: 0.75rem; font-family: var(--font-main); }
+        .btn-panic { background: rgba(255, 68, 68, 0.1); border: 2px solid var(--danger-red); color: var(--danger-red); padding: 1rem; width: 100%; font-family: var(--font-main); font-weight: bold; letter-spacing: 2px; cursor: pointer; transition: 0.3s; margin-top: 1.5rem; text-transform: uppercase; }
+        .btn-panic:hover { background: var(--danger-red); color: #000; box-shadow: 0 0 20px rgba(255, 68, 68, 0.5); }
+
+        #lockdown-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 10, 10, 0.98); z-index: 9999; flex-direction: column; justify-content: center; align-items: center; text-align: center; backdrop-filter: blur(10px); }
+        #lockdown-overlay.active { display: flex; }
+        .lockdown-text { font-size: 3rem; color: var(--danger-red); font-family: var(--font-condensed); letter-spacing: 5px; text-transform: uppercase; margin-bottom: 1rem; animation: pulse 2s infinite; }
+        .lockdown-timer { font-size: 2rem; color: var(--aurea-gold); font-family: var(--font-main); }
+        .lockdown-subtitle { color: var(--text-gray); margin: 1rem 0; max-width: 500px; line-height: 1.6; }
+        .emergency-override-btn { margin-top: 2rem; padding: 0.5rem 1rem; background: transparent; border: 1px dashed var(--text-gray); color: var(--text-gray); cursor: pointer; font-size: 0.8rem; font-family: var(--font-main); transition: 0.3s; }
+        .emergency-override-btn:hover { border-color: var(--aurea-gold); color: var(--aurea-gold); }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+
+        /* Calculadora flotante */
+        .calc-widget { position: fixed; bottom: 20px; right: 20px; width: 340px; background: rgba(15, 20, 25, 0.98); border: 2px solid var(--aurea-gold); border-radius: 4px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9); z-index: 1000; overflow: hidden; backdrop-filter: blur(10px); transition: transform 0.3s; transform: translateY(calc(100% - 45px)); }
+        .calc-widget.open { transform: translateY(0); }
+        .calc-header { background: var(--aurea-gold); color: #000; padding: 12px 15px; font-family: var(--font-condensed); font-weight: bold; letter-spacing: 1px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .calc-body { padding: 15px; max-height: 70vh; overflow-y: auto; }
+        .calc-group { margin-bottom: 12px; }
+        .calc-label { display: block; font-size: 0.75rem; color: var(--aurea-gold); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .calc-input { width: 100%; background: rgba(0, 0, 0, 0.5); border: 1px solid var(--border-gray); color: white; padding: 8px; font-family: var(--font-main); font-size: 0.9rem; }
+        .calc-input:focus { outline: none; border-color: var(--aurea-gold); box-shadow: 0 0 5px rgba(212, 175, 55, 0.3); }
+        .calc-select { width: 100%; background: rgba(0, 0, 0, 0.5); border: 1px solid var(--border-gray); color: white; padding: 8px; font-family: var(--font-main); font-size: 0.9rem; cursor: pointer; }
+        .calc-select:focus { outline: none; border-color: var(--aurea-gold); }
+        .calc-btn { width: 100%; padding: 12px; background: transparent; border: 2px solid var(--aurea-gold); color: var(--aurea-gold); cursor: pointer; font-weight: bold; margin-top: 10px; transition: 0.2s; font-family: var(--font-condensed); letter-spacing: 1px; text-transform: uppercase; }
+        .calc-btn:hover { background: var(--aurea-gold); color: #000; }
+        .calc-result { margin-top: 15px; padding-top: 15px; border-top: 1px dashed var(--border-gray); display: none; }
+        .calc-result p { font-size: 0.85rem; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .calc-result .highlight { color: var(--success-green); font-weight: bold; font-size: 1.1rem; }
+        .calc-result .warning { color: var(--warning-yellow); font-weight: bold; }
+        .calc-result .danger { color: var(--danger-red); font-weight: bold; }
+
+        /* Config Panel (Mi Protocolo) */
+        .config-section { margin-bottom: 3rem; }
+        .config-section-title { color: var(--aurea-gold); font-family: var(--font-condensed); font-size: 1.3rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; }
+        .config-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+        .config-field { margin-bottom: 1.5rem; }
+        .config-field-label { display: block; color: var(--aurea-gold); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; }
+        .config-field-input { width: 100%; background: rgba(0, 0, 0, 0.5); border: 1px solid var(--border-gray); color: white; padding: 0.75rem; font-family: var(--font-main); font-size: 1rem; transition: all 0.3s ease; }
+        .config-field-input:focus { outline: none; border-color: var(--aurea-gold); box-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
+        .config-field-helper { font-size: 0.75rem; color: var(--text-gray); margin-top: 0.3rem; }
+        .config-radio-group { display: flex; flex-direction: column; gap: 1rem; }
+        .config-radio-option { display: flex; align-items: flex-start; gap: 1rem; padding: 1rem; background: rgba(26, 26, 26, 0.5); border: 1px solid var(--border-gray); border-radius: 4px; cursor: pointer; transition: all 0.3s ease; }
+        .config-radio-option:hover { border-color: var(--aurea-gold); background: rgba(212, 175, 55, 0.05); }
+        .config-radio-option.active { border-color: var(--aurea-gold); background: rgba(212, 175, 55, 0.1); }
+        .config-radio-option input[type="radio"] { margin-top: 0.2rem; cursor: pointer; }
+        .config-radio-content { flex: 1; }
+        .config-radio-title { color: var(--aurea-gold); font-weight: bold; margin-bottom: 0.3rem; }
+        .config-radio-desc { color: var(--text-gray); font-size: 0.85rem; }
+        .config-checkbox { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: rgba(26, 26, 26, 0.5); border: 1px solid var(--border-gray); border-radius: 4px; margin-bottom: 1rem; cursor: pointer; transition: all 0.3s ease; }
+        .config-checkbox:hover { border-color: var(--aurea-gold); }
+        .config-actions { display: flex; gap: 1rem; margin-top: 3rem; flex-wrap: wrap; }
+        .config-btn { padding: 1rem 2rem; background: transparent; border: 2px solid var(--aurea-gold); color: var(--aurea-gold); font-family: var(--font-condensed); font-size: 1rem; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: all 0.3s ease; }
+        .config-btn:hover { background: var(--aurea-gold); color: var(--deep-black); }
+        .config-btn-secondary { border-color: var(--text-gray); color: var(--text-gray); }
+        .config-btn-secondary:hover { border-color: var(--aurea-gold); color: var(--aurea-gold); background: transparent; }
+        .config-warning-box { background: rgba(255, 170, 0, 0.1); border-left: 3px solid var(--warning-yellow); padding: 1rem; margin: 2rem 0; font-size: 0.85rem; color: var(--text-gray); }
+
+        /* Manual y Estadísticas Layouts */
+        .manual-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; }
+        .manual-card { background: rgba(26, 26, 26, 0.8); border: 1px solid var(--border-gray); border-left: 4px solid var(--aurea-gold); padding: 2rem; border-radius: 4px; }
+        .manual-title { color: var(--aurea-gold); font-family: var(--font-condensed); font-size: 1.2rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1.5rem; }
+        .manual-step { display: flex; gap: 1rem; margin-bottom: 1.5rem; align-items: flex-start; }
+        .step-number { min-width: 35px; height: 35px; background: var(--aurea-gold); color: var(--deep-black); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1rem; }
+        .step-content strong { color: var(--aurea-gold); display: block; margin-bottom: 0.5rem; }
+        .step-content p { color: var(--text-gray); font-size: 0.9rem; margin-bottom: 0.5rem; }
+        
+        .stats-header { margin-bottom: 2rem; display: flex; gap: 1rem; justify-content: flex-end; align-items: center; flex-wrap: wrap; }
+        .stats-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+        .kpi-card { background: linear-gradient(135deg, rgba(26, 26, 26, 0.9) 0%, rgba(42, 42, 42, 0.9) 100%); border: 2px solid var(--border-gray); padding: 1.5rem; text-align: center; border-radius: 4px; transition: all 0.3s ease; }
+        .kpi-card:hover { border-color: var(--aurea-gold); box-shadow: 0 4px 20px rgba(212, 175, 55, 0.2); }
+        .kpi-card.positive { border-color: var(--success-green); }
+        .kpi-card.negative { border-color: var(--danger-red); }
+        .kpi-label { color: var(--text-gray); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; }
+        .kpi-value { color: var(--aurea-gold); font-size: 2.5rem; font-weight: bold; font-family: var(--font-main); }
+        .kpi-percent { color: var(--text-gray); font-size: 0.9rem; margin-top: 0.3rem; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 3rem; }
+        .stats-card { background: rgba(26, 26, 26, 0.8); border: 1px solid var(--border-gray); border-left: 4px solid var(--aurea-gold); padding: 2rem; border-radius: 4px; }
+        .stats-title { color: var(--aurea-gold); font-family: var(--font-condensed); font-size: 1.1rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1.5rem; }
+        .stats-metric { display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-size: 0.9rem; }
+        .stats-metric:last-child { border-bottom: none; }
+        .stat-value { font-weight: bold; font-family: var(--font-main); }
+        .stat-value.positive { color: var(--success-green); }
+        .stat-value.negative { color: var(--danger-red); }
+
+        .trade-register-form { background: rgba(26, 26, 26, 0.8); border: 2px dashed var(--aurea-gold-dark); padding: 2rem; margin-bottom: 3rem; border-radius: 4px; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+        .form-group label { display: block; color: var(--aurea-gold); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; }
+
+        .trade-history { background: rgba(26, 26, 26, 0.8); border: 1px solid var(--border-gray); padding: 2rem; border-radius: 4px; }
+        .history-table { width: 100%; border-collapse: collapse; }
+        .history-table th { background: var(--dark-gray); color: var(--aurea-gold); padding: 1rem; text-align: left; border-bottom: 2px solid var(--aurea-gold); font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase; }
+        .history-table td { padding: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: var(--text-gray); }
+        .history-table tbody tr:hover { background: rgba(212, 175, 55, 0.05); }
+
+        /* Footer */
+        .footer { text-align: center; padding: 3rem 2rem; border-top: 1px solid var(--border-gray); margin-top: 4rem; }
+        .footer-text { color: var(--text-gray); font-size: 0.9rem; margin-bottom: 0.5rem; }
+        .footer-quote { color: var(--aurea-gold-dark); font-style: italic; font-size: 0.85rem; }
+
+        @media (max-width: 768px) {
+            /* HERO */
+            .hero-title { font-size: 2rem; }
+            .logo-image { max-width: 300px; }
+
+            /* PRICING - 1 col en mobile */
+            .pricing-grid { grid-template-columns: 1fr; gap: 1rem; }
+            .pricing-card.featured { transform: scale(1); }
+
+            /* DASHBOARD HEADER - compacto */
+            .dashboard-header { padding: 0.6rem 1rem; flex-direction: row; flex-wrap: wrap; gap: 0.5rem; }
+            .dashboard-logo { flex: 1; }
+            .dashboard-brand { font-size: 0.9rem; }
+            .dashboard-nav { flex-direction: column; width: 100%; gap: 0.5rem; }
+            .user-info { font-size: 0.7rem; }
+
+            /* NAV TABS - scroll horizontal, no columna */
+            .nav-tabs {
+                display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 0;
+                width: 100%; border-bottom: 1px solid rgba(212,175,55,0.2);
+                -webkit-overflow-scrolling: touch; scrollbar-width: none;
+            }
+            .nav-tabs::-webkit-scrollbar { display: none; }
+            .nav-tab {
+                flex-shrink: 0; padding: 0.6rem 0.9rem;
+                font-size: 0.65rem; letter-spacing: 0.5px; white-space: nowrap;
+            }
+
+            /* DASHBOARD CONTENT */
+            .dashboard-content { padding: 1rem; }
+
+            /* STATS HEADER */
+            .stats-header { flex-direction: column; width: 100%; align-items: stretch; }
+            .stats-header button { width: 100%; margin-bottom: 5px; }
+
+/* OVERVIEW GRID 2x2 */
+            .ov-grid { grid-template-columns: repeat(2, 1fr) !important; }
+
+            /* CALC WIDGET */
+            .calc-widget { width: calc(100% - 20px); right: 10px; }
+
+            /* PROTOCOL FORM */
+            .config-form-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCmynVNDcQ6hCc5znBXPx_pCvnbZS8SgWM",
+      authDomain: "aurea-black-box.firebaseapp.com",
+      projectId: "aurea-black-box",
+      storageBucket: "aurea-black-box.firebasestorage.app",
+      messagingSenderId: "226022368668",
+      appId: "1:226022368668:web:359614f854c825d8c69459"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const googleProvider = new GoogleAuthProvider();
+
+    // Exponer funciones al scope global
+    window.firebaseGoogleLogin = async () => {
+      try {
+        const result = await signInWithPopup(auth, googleProvider);
+        window.showDashboard(result.user.email);
+      } catch(e) {
+        console.error(e);
+        if(e.code !== 'auth/popup-closed-by-user') {
+          window.aureaToast('Error al iniciar con Google: ' + e.message, 'error');
+        }
+      }
+    };
+
+    window.firebaseEmailLogin = async (email, password, isRegister) => {
+      try {
+        let result;
+        if(isRegister) {
+          result = await createUserWithEmailAndPassword(auth, email, password);
+          window.aureaToast('✅ Cuenta creada. Bienvenido a AUREA.', 'success');
+        } else {
+          result = await signInWithEmailAndPassword(auth, email, password);
+        }
+        window.showDashboard(result.user.email);
+      } catch(e) {
+        const msgs = {
+          'auth/user-not-found': 'Email no registrado.',
+          'auth/wrong-password': 'Contraseña incorrecta.',
+          'auth/email-already-in-use': 'Este email ya tiene cuenta. Iniciá sesión.',
+          'auth/weak-password': 'La contraseña debe tener al menos 6 caracteres.',
+          'auth/invalid-email': 'Email inválido.',
+          'auth/invalid-credential': 'Email o contraseña incorrectos.'
+        };
+        const err = document.getElementById('login-error');
+        if(err) { err.innerText = msgs[e.code] || 'Error: ' + e.message; err.style.display = 'block'; setTimeout(()=>err.style.display='none', 4000); }
+      }
+    };
+
+    window.firebaseLogout = async () => {
+      await signOut(auth);
+      localStorage.removeItem('aurea_session');
+      window.showLanding();
+    };
+
+    // Restaurar sesión si ya estaba logueado
+    onAuthStateChanged(auth, (user) => {
+      if(user) {
+        window.showDashboard(user.email);
+      }
+    });
+  </script>
+</head>
+<body>
+    <div id="landing-page">
+        <section class="landing-hero">
+            <div class="logo-container">
+                <img src="images/logo-aurea.png" alt="AUREA BLACK BOX Logo" class="logo-image"
+                     onerror="this.style.display='none'; document.querySelector('.hero-title').style.marginTop='2rem';">
+            </div>
+            <h1 class="hero-title">AUREA BLACK BOX</h1>
+            <h2 class="hero-subtitle">Institutional Trading Framework</h2>
+            <p class="hero-tagline">No generamos ideas. Eliminamos malas decisiones.</p>
+            <div style="display:flex;gap:30px;flex-wrap:wrap;justify-content:center;margin-bottom:2.5rem;animation:fadeInUp 1s ease-out 0.7s both;">
+                <div style="text-align:center;"><span style="font-family:Arial Narrow,sans-serif;font-size:22px;font-weight:700;color:#d4af37;letter-spacing:2px;">60</span><span style="display:block;font-size:10px;color:#5a5f72;letter-spacing:2px;text-transform:uppercase;margin-top:2px;">Operadores Activos</span></div>
+                <div style="width:1px;background:rgba(212,175,55,0.2);"></div>
+                <div style="text-align:center;"><span style="font-family:Arial Narrow,sans-serif;font-size:22px;font-weight:700;color:#d4af37;letter-spacing:2px;">$2.3M</span><span style="display:block;font-size:10px;color:#5a5f72;letter-spacing:2px;text-transform:uppercase;margin-top:2px;">Capital Gestionado</span></div>
+                <div style="width:1px;background:rgba(212,175,55,0.2);"></div>
+                <div style="text-align:center;"><span style="font-family:Arial Narrow,sans-serif;font-size:22px;font-weight:700;color:#d4af37;letter-spacing:2px;">285</span><span style="display:block;font-size:10px;color:#5a5f72;letter-spacing:2px;text-transform:uppercase;margin-top:2px;">Análisis Ejecutados</span></div>
+            </div>
+            <div class="cta-buttons">
+                <button class="btn btn-primary" onclick="showLogin()">ACCEDER AL SISTEMA</button>
+                <a href="#features" class="btn btn-secondary">VER CÓMO FUNCIONA ↓</a>
+            </div>
+        </section>
+
+        <section id="features" class="features-section">
+            <div class="section-header">
+                <h2 class="section-title">¿Qué Ofrecemos?</h2>
+                <p class="section-subtitle">Sistema institucional completo de gestión de riesgo</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🧮</div>
+                    <h3 class="feature-title">Calculadora Táctica</h3>
+                    <p class="feature-desc">Sizing matemático exacto basado en ATR o Porcentaje Fijo. Cálculo automático de stop loss, validación de R:R y exposición nocional. Funciona para cualquier estrategia de trading.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3 class="feature-title">Circuit Breakers</h3>
+                    <p class="feature-desc">Sistema anti-tilt que bloquea operaciones por 24hs después de alcanzar tu límite de pérdidas. Protección contra revenge trading y decisiones emocionales.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">Estadísticas Avanzadas</h3>
+                    <p class="feature-desc">Tracking completo de performance: Win rate, expectancy, payoff ratio, rachas ganadoras. Todas las métricas institucionales locales y 100% privadas.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📋</div>
+                    <h3 class="feature-title">Protocolo Custom</h3>
+                    <p class="feature-desc">Construye tu propio framework de ejecución. Define tus perfiles, reglas de correlación cruzada para evitar apalancamiento oculto y drawdown recovery protocol.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📡</div>
+                    <h3 class="feature-title">Precios & Gráficos</h3>
+                    <p class="feature-desc">Integración en tiempo real con Wall Street y Crypto. Terminal de TradingView embebida directamente en tu dashboard para análisis sin distracciones.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📚</div>
+                    <h3 class="feature-title">Agnóstico al Mercado</h3>
+                    <p class="feature-desc">No te obligamos a operar nuestro método. El sistema se amolda a SMC, ICT, Price Action o Elliot. Tú pones la orden, nosotros evitamos que quiebres.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="pricing" class="pricing-section">
+            <div class="section-header">
+                <h2 class="section-title">Planes de Acceso</h2>
+                <p class="section-subtitle">El costo de la disciplina siempre es menor al costo de la ruina.</p>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3 class="pricing-tier">LITE</h3>
+                    <div class="pricing-price"><span class="currency">$</span>0<span class="period">/mes</span></div>
+                    <p class="pricing-desc">Para conocer la matemática del riesgo.</p>
+                    <ul class="pricing-features">
+                        <li>✔️ Calculadora Táctica Básica</li>
+                        <li>✔️ Precios de Crypto en Vivo</li>
+                        <li class="disabled">❌ Circuit Breaker Anti-Tilt</li>
+                        <li class="disabled">❌ Estadísticas de Performance</li>
+                        <li class="disabled">❌ Configuración de Protocolo</li>
+                    </ul>
+                    <button class="btn btn-secondary" style="width: 100%; margin-top: 2rem;" onclick="showLogin()">PROBAR GRATIS</button>
+                </div>
+
+                <div class="pricing-card featured">
+                    <div class="popular-badge">MÁS ELEGIDO</div>
+                    <h3 class="pricing-tier" style="color: var(--deep-black);">PRO MENSUAL</h3>
+                    <div class="pricing-price"><span class="currency">$</span>19.900<span class="period"> ARS/m</span></div>
+                    <p class="pricing-desc" style="color: rgba(0,0,0,0.7); font-weight: bold;">(O $29 USD para el exterior)</p>
+                    <ul class="pricing-features" style="color: var(--deep-black);">
+                        <li>✔️ <strong>Aurea Black Box Completo</strong></li>
+                        <li>✔️ Construcción de Protocolo Propio</li>
+                        <li>✔️ <strong>Circuit Breaker Anti-Tilt (24hs)</strong></li>
+                        <li>✔️ Gráficos Pro + Redundancia API</li>
+                        <li>✔️ Tracking de Estadísticas Local</li>
+                        <li>✔️ Exportación de Datos (CSV)</li>
+                    </ul>
+                    <button class="btn btn-primary" style="width: 100%; margin-top: 2rem; background: var(--deep-black); border-color: var(--deep-black); color: var(--aurea-gold);" onclick="showLogin()">SUSCRIBIRME</button>
+                </div>
+
+                <div class="pricing-card">
+                    <h3 class="pricing-tier">PRO ANUAL</h3>
+                    <div class="pricing-price"><span class="currency">$</span>149.000<span class="period"> ARS/año</span></div>
+                    <p class="pricing-desc" style="color: var(--success-green); font-weight: bold;">Ahorrás un 35% (Equivale a $12.400/mes)</p>
+                    <ul class="pricing-features">
+                        <li>✔️ <strong>Acceso a todo el Plan PRO</strong></li>
+                        <li>✔️ Precio congelado por 12 meses</li>
+                        <li>✔️ Acceso anticipado a nuevas funciones</li>
+                        <li>✔️ Cero riesgo de aumentos por inflación</li>
+                        <li>✔️ Setup de riesgo para largo plazo</li>
+                    </ul>
+                    <button class="btn btn-secondary" style="width: 100%; margin-top: 2rem;" onclick="showLogin()">PAGAR AÑO COMPLETO</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="faq-section">
+            <div class="section-header">
+                <h2 class="section-title">Preguntas Frecuentes</h2>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span class="faq-q-text">¿Para quién está diseñado AUREA BLACK BOX?</span><span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer"><div class="faq-a-content">Para traders que buscan disciplina institucional. Si estás cansado de quemar cuentas por operar de revancha o por medir mal tu apalancamiento, esta es tu camisa de fuerza matemática.</div></div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span class="faq-q-text">¿Me obliga a operar una estrategia particular?</span><span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer"><div class="faq-a-content">No. Vos traés tu análisis y tu entrada. Aurea se encarga exclusivamente de calcular el riesgo exacto (Size), validar la correlación para que no te sobre-expongas, y cortarte el acceso si detecta "Tilt".</div></div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span class="faq-q-text">¿Los datos se guardan en la nube?</span><span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer"><div class="faq-a-content">No, todo se guarda en tu navegador (localStorage). Tus estadísticas, configuración y trades son 100% privados y locales. La privacidad del capital es prioridad.</div></div>
+            </div>
+        </section>
+        
+<!-- BLOQUE LEGAL -->
+<div style="background:#030405; border-top:1px solid rgba(212,175,55,0.2); padding:60px 5% 40px;">
+  <div style="max-width:1000px; margin:0 auto;">
+
+    <div style="border:1px solid rgba(212,175,55,0.3); border-radius:4px; padding:30px; margin-bottom:40px; background:rgba(212,175,55,0.04);">
+      <p style="font-family:Arial Narrow,sans-serif; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#d4af37; margin:0 0 12px 0;">&#9888; DESCARGO DE RESPONSABILIDAD &#8212; LEER ANTES DE CONTINUAR</p>
+      <p style="font-size:12px; color:#9a9fb8; line-height:1.8; margin:0;">
+        AUREA BLACK BOX es una plataforma de <strong style="color:#e0e4f0;">an&#225;lisis, organizaci&#243;n y educaci&#243;n financiera personal</strong>.
+        Todo el contenido, an&#225;lisis, herramientas, modelos de valuaci&#243;n, alertas, indicadores y cualquier otra informaci&#243;n
+        disponible en esta plataforma tiene <strong style="color:#e0e4f0;">car&#225;cter exclusivamente informativo y educativo</strong>.
+        Nada de lo publicado en AUREA BLACK BOX constituye, ni debe interpretarse como, asesoramiento financiero,
+        recomendaci&#243;n de inversi&#243;n, oferta de compra o venta de valores, ni consejo legal o impositivo de ning&#250;n tipo.<br><br>
+        <strong style="color:#e0e4f0;">Cada usuario es el &#250;nico y exclusivo responsable de sus decisiones de inversi&#243;n.</strong>
+        Invertir en mercados financieros implica riesgos significativos, incluyendo la p&#233;rdida total del capital invertido.
+        Los rendimientos pasados no garantizan resultados futuros. Antes de tomar cualquier decisi&#243;n de inversi&#243;n,
+        se recomienda consultar con un asesor financiero independiente, habilitado y regulado en su jurisdicci&#243;n.
+      </p>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:30px; margin-bottom:40px;">
+      <div>
+        <p style="font-family:Arial Narrow,sans-serif; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#d4af37; margin:0 0 12px 0;">T&#233;rminos de Uso</p>
+        <p style="font-size:12px; color:#5a5f72; line-height:1.7; margin:0;">
+          El acceso y uso de AUREA BLACK BOX implica la aceptaci&#243;n plena de estos t&#233;rminos.
+          El usuario se compromete a utilizar la plataforma &#250;nicamente para fines l&#237;citos y personales.
+          Queda prohibida la reproducci&#243;n, distribuci&#243;n o comercializaci&#243;n del contenido sin autorizaci&#243;n expresa por escrito.
+          AUREA BLACK BOX se reserva el derecho de modificar, suspender o discontinuar el servicio en cualquier momento sin previo aviso.
+        </p>
+      </div>
+      <div>
+        <p style="font-family:Arial Narrow,sans-serif; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#d4af37; margin:0 0 12px 0;">Limitaci&#243;n de Responsabilidad</p>
+        <p style="font-size:12px; color:#5a5f72; line-height:1.7; margin:0;">
+          En ning&#250;n caso AUREA BLACK BOX, sus creadores, colaboradores o afiliados ser&#225;n responsables por p&#233;rdidas
+          directas, indirectas, incidentales o consecuentes derivadas del uso o imposibilidad de uso de la plataforma,
+          incluyendo pero no limitado a p&#233;rdidas de capital, p&#233;rdidas de datos, o interrupciones del servicio.
+          El uso de la plataforma es bajo la exclusiva responsabilidad del usuario.
+        </p>
+      </div>
+      <div>
+        <p style="font-family:Arial Narrow,sans-serif; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#d4af37; margin:0 0 12px 0;">Privacidad y Datos</p>
+        <p style="font-size:12px; color:#5a5f72; line-height:1.7; margin:0;">
+          AUREA BLACK BOX no vende ni comparte datos personales de sus usuarios con terceros para fines comerciales.
+          Los datos ingresados en la plataforma son utilizados exclusivamente para proveer el servicio contratado.
+          El usuario puede solicitar la eliminaci&#243;n de sus datos en cualquier momento contactando al equipo de soporte.
+        </p>
+      </div>
+    </div>
+
+    <div style="border-top:1px solid rgba(255,255,255,0.05); padding-top:25px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px;">
+      <span style="font-family:Arial Narrow,sans-serif; font-size:11px; color:#5a5f72; letter-spacing:1px; text-transform:uppercase;">&#169; 2026 AUREA BLACK BOX &#8212; Institutional Trading Framework. Todos los derechos reservados.</span>
+      <span style="font-family:Arial Narrow,sans-serif; font-size:11px; color:#5a5f72; letter-spacing:1px; text-transform:uppercase;">No es asesoramiento financiero. Invertir conlleva riesgos.</span>
+    </div>
+
+  </div>
+</div>
+
+        <footer class="footer" style="margin-top: 0;">
+            <p class="footer-text">AUREA BLACK BOX - Institutional Trading Framework</p>
+            <p class="footer-quote">"El mercado recompensa la disciplina. El mercado castiga la arrogancia."</p>
+        </footer>
+    </div>
+
+    <div id="login-page">
+        <div class="login-container">
+            <div class="login-logo">
+                <img src="images/login-aurea.png" alt="AUREA BLACK BOX" onerror="this.style.display='none';">
+            </div>
+            <h2 class="login-title">AUREA BLACK BOX</h2>
+            <p class="login-subtitle">Institutional Equity Framework</p>
+            <p class="login-tagline">No generamos ideas. Eliminamos malas decisiones.</p>
+            
+            <div class="social-auth">
+                <button class="social-btn btn-google" onclick="handleSocialAuth('Google')">
+                    <svg class="social-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                    Continuar con Google
+                </button>
+                <button class="social-btn btn-apple" onclick="handleSocialAuth('Apple')">
+                    <svg class="social-icon" viewBox="0 0 384 512"><path fill="currentColor" d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+                    Continuar con Apple
+                </button>
+            </div>
+
+            <div class="auth-divider"><span>O usa tu email</span></div>
+
+            <div class="login-error" id="login-error">Usuario o contraseña incorrectos</div>
+            <form class="login-form" onsubmit="handleLogin(event)">
+                <div class="login-input-group"><label class="login-label">Email</label><input type="email" id="login-email" class="login-input" placeholder="usuario@ejemplo.com" required></div>
+                <div class="login-input-group"><label class="login-label">Contraseña</label><input type="password" id="login-password" class="login-input" placeholder="••••••••" required></div>
+                <button type="submit" class="login-btn" id="auth-submit-btn">INGRESAR</button>
+            </form>
+            
+            <div class="auth-switch">
+                <span id="auth-switch-text">¿No tienes cuenta? <a href="#" onclick="toggleAuthMode(); return false;">Regístrate aquí</a></span>
+            </div>
+
+            <div class="back-to-home"><a href="#" onclick="showLanding(); return false;">← Volver al inicio</a></div>
+        </div>
+    </div>
+
+    <div id="dashboard-page">
+        <div class="dashboard-header">
+            <div class="dashboard-logo">
+                <img src="images/logo-aurea.png" alt="" style="height: 40px;" onerror="this.style.display='none';">
+                <span class="dashboard-brand">AUREA BLACK BOX</span>
+            </div>
+            <nav class="dashboard-nav">
+                <div class="nav-tabs">
+                    <button class="nav-tab active" onclick="switchDashboardTab('overview')">PANEL GENERAL</button>
+                    <button class="nav-tab" onclick="switchDashboardTab('protocol')">MI PROTOCOLO</button>
+                    <button class="nav-tab" onclick="switchDashboardTab('manual')">MANUAL</button>
+                    <button class="nav-tab" onclick="switchDashboardTab('stats')">ESTADÍSTICAS</button>
+                    <button class="nav-tab" onclick="switchDashboardTab('correlaciones')">CORRELACIONES</button>
+                </div>
+                <div class="user-menu">
+                    <span class="user-email" id="user-email-display"></span>
+                    <button class="logout-btn" onclick="handleLogout()">SALIR</button>
+                </div>
+            </nav>
+        </div>
+
+        <div class="dashboard-content">
+            <div id="tab-overview" class="tab-panel active">
+                <div class="welcome-card">
+                    <h2 class="welcome-title">Bienvenido al Sistema</h2>
+                    <p class="welcome-subtitle">Framework institucional de gestión de riesgo</p>
+                </div>
+
+                <div class="protocol-card" style="padding: 0; overflow: hidden; border-color: var(--aurea-gold);">
+                    <div class="tradingview-widget-container" style="height: 500px; width: 100%;">
+                      <div id="tradingview_aurea" style="height: calc(100% - 32px); width: 100%;"></div>
+                      <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                      <script type="text/javascript">
+                      if (typeof TradingView !== 'undefined') {
+                          new TradingView.widget({
+                          "autosize": true,
+                          "symbol": "BINANCE:BTCUSDT",
+                          "interval": "D",
+                          "timezone": "America/Argentina/Buenos_Aires",
+                          "theme": "dark",
+                          "style": "1",
+                          "locale": "es",
+                          "enable_publishing": false,
+                          "allow_symbol_change": true,
+                          "backgroundColor": "#0a0a0a",
+                          "gridColor": "#1a1a1a",
+                          "hide_top_toolbar": false,
+                          "hide_legend": false,
+                          "save_image": false,
+                          "container_id": "tradingview_aurea",
+                          "toolbar_bg": "#0a0a0a"
+                          });
+                      }
+                      </script>
+                    </div>
+                </div>
+
+                <div class="protocol-card">
+                    <h3 class="card-title"><span class="card-icon">🔒</span> CIRCUIT BREAKERS</h3>
+                    <div class="card-content">
+                        <p>El sistema protege tu capital forzando la disciplina matemática si pierdes el control de las emociones.</p><br>
+                        <ul>
+                            <li><strong>DAILY LOSS LIMIT:</strong> MESA CERRADA si alcanzas tu límite.</li>
+                            <li><strong>DRAWDOWN RECOVERY:</strong> Riesgo reducido post-stop loss.</li>
+                            <li><strong>TILT BREAKER:</strong> Modo pánico manual o automático.</li>
+                        </ul>
+                        <button class="btn-panic" onclick="triggerPanic()">🚨 ACTIVAR CIRCUIT BREAKER (TILT) 🚨</button>
+                    </div>
+                </div>
+
+                <!-- RESUMEN EJECUTIVO ESTADÍSTICAS -->
+                <div class="protocol-card">
+                    <h3 class="card-title"><span class="card-icon">📊</span> RESUMEN DE PERFORMANCE</h3>
+                    <div class="card-content">
+                        <div class="ov-grid" style="display:grid; grid-template-columns: repeat(4, 1fr); gap:1rem; margin-bottom:1.5rem;">
+                            <div style="text-align:center; padding:1rem; background:rgba(212,175,55,0.05); border:1px solid rgba(212,175,55,0.15); border-radius:4px;">
+                                <div style="font-size:0.7rem; color:var(--text-gray); text-transform:uppercase; letter-spacing:1px; margin-bottom:0.5rem;">Win Rate</div>
+                                <div id="ov-winrate" style="font-size:1.6rem; font-weight:bold; color:var(--aurea-gold); font-family:var(--font-main);">—</div>
+                            </div>
+                            <div style="text-align:center; padding:1rem; background:rgba(212,175,55,0.05); border:1px solid rgba(212,175,55,0.15); border-radius:4px;">
+                                <div style="font-size:0.7rem; color:var(--text-gray); text-transform:uppercase; letter-spacing:1px; margin-bottom:0.5rem;">P&L Neto</div>
+                                <div id="ov-pnl" style="font-size:1.6rem; font-weight:bold; color:var(--aurea-gold); font-family:var(--font-main);">—</div>
+                            </div>
+                            <div style="text-align:center; padding:1rem; background:rgba(212,175,55,0.05); border:1px solid rgba(212,175,55,0.15); border-radius:4px;">
+                                <div style="font-size:0.7rem; color:var(--text-gray); text-transform:uppercase; letter-spacing:1px; margin-bottom:0.5rem;">Profit Factor</div>
+                                <div id="ov-pf" style="font-size:1.6rem; font-weight:bold; color:var(--aurea-gold); font-family:var(--font-main);">—</div>
+                            </div>
+                            <div style="text-align:center; padding:1rem; background:rgba(212,175,55,0.05); border:1px solid rgba(212,175,55,0.15); border-radius:4px;">
+                                <div style="font-size:0.7rem; color:var(--text-gray); text-transform:uppercase; letter-spacing:1px; margin-bottom:0.5rem;">Racha Actual</div>
+                                <div id="ov-streak" style="font-size:1.6rem; font-weight:bold; color:var(--aurea-gold); font-family:var(--font-main);">—</div>
+                            </div>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.8rem; color:var(--text-gray);">
+                            <span id="ov-trades">Sin trades registrados.</span>
+                            <button class="btn btn-secondary" onclick="switchDashboardTab('stats'); document.querySelectorAll('.nav-tab').forEach((t,i)=>t.classList.toggle('active',i===3));" style="padding:0.4rem 0.8rem; font-size:0.75rem;">VER DETALLE →</button>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div id="tab-protocol" class="tab-panel">
+                <div class="section-header">
+                    <h2 class="section-title">Mi Protocolo de Trading</h2>
+                    <p class="section-subtitle">Configura tu sistema personalizado - 100% adaptable a tu estilo</p>
+                </div>
+
+                <div class="config-warning-box">
+                    <strong>⚠️ IMPORTANTE:</strong> Estos ajustes controlan cómo funciona tu calculadora, circuit breaker y validaciones. Modifícalos con cuidado.
+                </div>
+
+                <div class="config-section">
+                    <h3 class="config-section-title">1️⃣ PERFIL DE RIESGO & CAPITAL</h3>
+                    <div class="config-form-grid">
+                        <div class="config-field">
+                            <label class="config-field-label">Net Worth Total (USD)</label>
+                            <input type="number" id="cfg-nw" class="config-field-input" step="100" value="20000" onchange="updateRiskDisplay()">
+                            <p class="config-field-helper">Capital de tu portfolio (Afecta el Size de la calculadora)</p>
+                        </div>
+                        <div class="config-field">
+                            <label class="config-field-label">Riesgo base por trade (%)</label>
+                            <input type="number" id="cfg-risk-base" class="config-field-input" step="0.01" min="0.01" max="10" value="0.15" onchange="updateRiskDisplay()">
+                            <p class="config-field-helper">Porcentaje del Net Worth que arriesgas en estado NORMAL</p>
+                        </div>
+                        <div class="config-field">
+                            <label class="config-field-label">Riesgo en recovery (%)</label>
+                            <input type="number" id="cfg-risk-recovery" class="config-field-input" step="0.01" min="0.01" max="10" value="0.10">
+                            <p class="config-field-helper">Riesgo reducido para recuperarte después de un stop loss</p>
+                        </div>
+                        <div class="config-field">
+                            <label class="config-field-label">Daily loss limit (%)</label>
+                            <input type="number" id="cfg-daily-limit" class="config-field-input" step="0.1" min="0.1" max="20" value="0.30">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="config-section">
+                    <h3 class="config-section-title">2️⃣ METODOLOGÍA DE STOP LOSS</h3>
+                    <div class="config-radio-group">
+                        <div class="config-radio-option active" onclick="selectStopMethod('atr')">
+                            <input type="radio" name="stop-method" value="atr" id="stop-atr" checked>
+                            <div class="config-radio-content">
+                                <div class="config-radio-title">ATR-Based (Dinámico)</div>
+                                <div class="config-radio-desc">Calcula el stop estructural y le suma/resta un margen (Buffer) basado en volatilidad.</div>
+                                <div class="config-radio-input">
+                                    <label style="color: var(--text-gray); font-size: 0.85rem;">Multiplier ATR:</label>
+                                    <input type="number" id="cfg-atr-multiplier" class="config-field-input" step="0.1" min="0" max="3" value="0.5" style="width: 100px; display: inline-block; margin-left: 0.5rem;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="config-radio-option" onclick="selectStopMethod('percent')">
+                            <input type="radio" name="stop-method" value="percent" id="stop-percent">
+                            <div class="config-radio-content">
+                                <div class="config-radio-title">Porcentaje Fijo</div>
+                                <div class="config-radio-desc">Calcula el Hard Stop automáticamente restando/sumando este % a la entrada.</div>
+                                <div class="config-radio-input">
+                                    <label style="color: var(--text-gray); font-size: 0.85rem;">Stop loss (%):</label>
+                                    <input type="number" id="cfg-percent-stop" class="config-field-input" step="0.1" min="0.1" max="20" value="2" style="width: 100px; display: inline-block; margin-left: 0.5rem;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="config-radio-option" onclick="selectStopMethod('manual')">
+                            <input type="radio" name="stop-method" value="manual" id="stop-manual">
+                            <div class="config-radio-content">
+                                <div class="config-radio-title">Manual Puro</div>
+                                <div class="config-radio-desc">Ingresás tu Stop Loss exacto en la calculadora sin alteraciones matemáticas.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="config-section">
+                    <h3 class="config-section-title">3️⃣ EXIGENCIA DE TAKE PROFIT</h3>
+                    <div class="config-form-grid">
+                        <div class="config-field">
+                            <label class="config-field-label">R:R Mínimo requerido</label>
+                            <input type="number" id="cfg-min-rr" class="config-field-input" step="0.1" min="0.5" max="10" value="2.0">
+                            <p class="config-field-helper">Si la operación proyecta un ratio menor a este, la calculadora bloqueará el trade.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="config-section">
+                    <h3 class="config-section-title">4️⃣ ESTILO OPERATIVO</h3>
+                    <div class="config-form-grid">
+                        <div class="config-field">
+                            <label class="config-field-label">Nombre de tu Estrategia</label>
+                            <input type="text" id="cfg-protocol-name" class="config-field-input" value="Mi Sistema Institucional" maxlength="50" onchange="updateCalcUI()">
+                            <p class="config-field-helper">Este nombre aparecerá en la Calculadora Táctica.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="config-section">
+                    <h3 class="config-section-title">5️⃣ CIRCUIT BREAKER ANTI-TILT</h3>
+                    <div class="config-form-grid">
+                        <div class="config-field">
+                            <label class="config-field-label">Pérdidas consecutivas para bloqueo</label>
+                            <input type="number" id="cfg-cb-losses" class="config-field-input" step="1" min="1" max="10" value="3">
+                            <p class="config-field-helper">Después de N stops seguidos, la calculadora se bloquea automáticamente.</p>
+                        </div>
+                        <div class="config-field">
+                            <label class="config-field-label">Horas de bloqueo</label>
+                            <input type="number" id="cfg-cb-hours" class="config-field-input" step="1" min="1" max="72" value="24">
+                            <p class="config-field-helper">Tiempo obligatorio fuera del mercado tras activar el Circuit Breaker.</p>
+                        </div>
+                        <div class="config-field">
+                            <label class="config-field-label">Drawdown diario máximo (%)</label>
+                            <input type="number" id="cfg-cb-drawdown" class="config-field-input" step="0.1" min="0.1" max="20" value="2.0">
+                            <p class="config-field-helper">Si el drawdown del día supera este %, se activa el bloqueo sin importar el número de trades.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="config-section">
+                    <h3 class="config-section-title">6️⃣ CONTROL DE CORRELACIÓN</h3>
+                    <div class="config-form-grid">
+                        <div class="config-field">
+                            <label class="config-field-label">Máx. activos correlacionados simultáneos</label>
+                            <input type="number" id="cfg-max-corr" class="config-field-input" step="1" min="1" max="10" value="2">
+                            <p class="config-field-helper">Ej: si tenés AAPL y MSFT abiertas, no abrir una 3ra tech. Evita apalancamiento oculto.</p>
+                        </div>
+                        <div class="config-field">
+                            <label class="config-field-label">Exposición máxima por sector (%)</label>
+                            <input type="number" id="cfg-max-sector" class="config-field-input" step="1" min="1" max="100" value="30">
+                            <p class="config-field-helper">Máximo porcentaje del capital expuesto a un mismo sector (Tech, Energy, Financials, etc.)</p>
+                        </div>
+                        <div class="config-field">
+                            <label class="config-field-label">Máx. posiciones abiertas simultáneas</label>
+                            <input type="number" id="cfg-max-positions" class="config-field-input" step="1" min="1" max="20" value="4">
+                            <p class="config-field-helper">Límite duro de operaciones abiertas al mismo tiempo.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="config-section">
+                    <h3 class="config-section-title">7️⃣ REGLAS DE SALIDA & GESTIÓN</h3>
+                    <div class="config-form-grid">
+                        <div class="config-field">
+                            <label class="config-field-label">Trailing Stop (% sobre ganancia)</label>
+                            <input type="number" id="cfg-trailing" class="config-field-input" step="0.5" min="0" max="50" value="0">
+                            <p class="config-field-helper">0 = desactivado. Si ponés 50%, cierra si el precio retrocede 50% desde el máximo.</p>
+                        </div>
+                        <div class="config-field">
+                            <label class="config-field-label">Parcializar en R:R</label>
+                            <input type="number" id="cfg-partial-rr" class="config-field-input" step="0.5" min="0" max="10" value="1.0">
+                            <p class="config-field-helper">Cerrar 50% de la posición cuando el trade llegue a este R:R para asegurar ganancia.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="config-actions">
+                    <button class="config-btn" onclick="saveProtocol()">💾 GUARDAR CONFIGURACIÓN</button>
+                    <button class="config-btn config-btn-secondary" onclick="resetProtocol()">🔄 RESETEAR</button>
+                </div>
+            </div>
+
+            <div id="tab-manual" class="tab-panel">
+                <div class="section-header"><h2 class="section-title">📖 MANUAL DE USO</h2></div>
+                <div class="manual-grid">
+                    <div class="manual-card">
+                        <h3 class="manual-title">🚀 INICIO RÁPIDO</h3>
+                        <div class="manual-step"><span class="step-number">1</span><div class="step-content"><strong>Configurar Reglas</strong><p>Ir a "Mi Protocolo" y ajustar capital, tipo de Stop y ratios mínimos.</p></div></div>
+                        <div class="manual-step"><span class="step-number">2</span><div class="step-content"><strong>Calculadora</strong><p>Abrir "CALCULAR SIZE" (esquina inf. derecha).</p></div></div>
+                        <div class="manual-step"><span class="step-number">3</span><div class="step-content"><strong>Obtener Precio</strong><p>Ingresar Ticker (BTC, AAPL) y click OBTENER.</p></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-stats" class="tab-panel">
+                <div class="section-header"><h2 class="section-title">📊 ESTADÍSTICAS DE TRADING</h2></div>
+                <div class="stats-header">
+                    <button class="btn btn-secondary" onclick="resetStats()" style="padding: 0.5rem 1rem;">🔄 RESET</button>
+                    <button class="btn btn-secondary" onclick="exportStats()" style="padding: 0.5rem 1rem;">📤 EXPORTAR CSV</button>
+                    <button class="btn btn-secondary" onclick="importStats()" style="padding: 0.5rem 1rem;">📥 IMPORTAR CSV</button>
+                </div>
+                <input type="file" id="csv-file-input" accept=".csv" style="display: none;" onchange="handleCSVImport(event)">
+                
+                <div class="stats-kpis">
+                    <div class="kpi-card"><div class="kpi-label">Trades</div><div class="kpi-value" id="kpi-total">0</div></div>
+                    <div class="kpi-card positive"><div class="kpi-label">Ganados</div><div class="kpi-value" id="kpi-wins">0</div></div>
+                    <div class="kpi-card negative"><div class="kpi-label">Perdidos</div><div class="kpi-value" id="kpi-losses">0</div></div>
+                    <div class="kpi-card"><div class="kpi-label">Win Rate</div><div class="kpi-value" id="kpi-winrate">0%</div></div>
+                    <div class="kpi-card"><div class="kpi-label">Profit Factor</div><div class="kpi-value" id="kpi-pf">0.00</div></div>
+                    <div class="kpi-card negative"><div class="kpi-label">Max Drawdown</div><div class="kpi-value" id="kpi-maxdd">0.00R</div></div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stats-card">
+                        <h3 class="stats-title">📈 EXPECTANCY</h3>
+                        <div class="stats-metric"><span>Expectancy:</span><span id="stat-expectancy" class="stat-value">0.00R</span></div>
+                        <div class="stats-metric"><span>Payoff Ratio:</span><span id="stat-payoff" class="stat-value">0.00</span></div>
+                        <div class="stats-metric"><span>Avg. Win:</span><span id="stat-avg-win" class="stat-value positive">0.00R</span></div>
+                        <div class="stats-metric"><span>Avg. Loss:</span><span id="stat-avg-loss" class="stat-value negative">0.00R</span></div>
+                    </div>
+                    <div class="stats-card">
+                        <h3 class="stats-title">💰 P&L EN R</h3>
+                        <div class="stats-metric"><span>P&L Neto:</span><span id="stat-net-r" class="stat-value">0.00R</span></div>
+                        <div class="stats-metric"><span>Profit Factor:</span><span id="stat-pf" class="stat-value">0.00</span></div>
+                        <div class="stats-metric"><span>Mejor Trade:</span><span id="stat-best" class="stat-value positive">0.00R</span></div>
+                        <div class="stats-metric"><span>Peor Trade:</span><span id="stat-worst" class="stat-value negative">0.00R</span></div>
+                    </div>
+                    <div class="stats-card">
+                        <h3 class="stats-title">🎯 RACHAS & DRAWDOWN</h3>
+                        <div class="stats-metric"><span>Racha Actual:</span><span id="stat-current-streak" class="stat-value">0</span></div>
+                        <div class="stats-metric"><span>Mejor Racha:</span><span id="stat-best-streak" class="stat-value positive">0</span></div>
+                        <div class="stats-metric"><span>Peor Racha:</span><span id="stat-worst-streak" class="stat-value negative">0</span></div>
+                        <div class="stats-metric"><span>Max Drawdown:</span><span id="stat-maxdd" class="stat-value negative">0.00R</span></div>
+                    </div>
+                </div>
+
+                <div class="trade-register-form">
+                    <h3 style="color: var(--aurea-gold); margin-bottom: 1rem;">➕ REGISTRAR TRADE CERRADO</h3>
+                    <div class="form-grid">
+                        <div class="form-group"><label>Resultado (en R)</label><input type="number" id="trade-result-r" placeholder="+2.5 o -1.0" step="0.1" class="calc-input"></div>
+                        <div class="form-group"><label>Notas</label><input type="text" id="trade-notes" placeholder="Ej: Scalping EURUSD" class="calc-input"></div>
+                    </div>
+                    <button class="btn btn-primary" onclick="registerTrade()" style="margin-top: 1rem; width: 100%;">💾 GUARDAR TRADE</button>
+                </div>
+
+                <div class="trade-history">
+                    <h3 style="color: var(--aurea-gold); margin-bottom: 1rem;">📋 HISTORIAL</h3>
+                    <table class="history-table">
+                        <thead><tr><th>#</th><th>Resultado</th><th>Notas</th><th>Fecha</th></tr></thead>
+                        <tbody id="trade-history-body"><tr><td colspan="4" style="text-align: center; color: var(--text-gray); padding: 2rem;">Sin trades.</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ── TAB CORRELACIONES ─────────────────────────────── -->
+            <div id="tab-correlaciones" class="tab-panel">
+                <div class="section-header"><h2 class="section-title">🔗 MAPA DE CORRELACIONES</h2></div>
+                <p style="color:var(--text-gray); font-size:0.9rem; margin-bottom:2rem; max-width:700px;">Las correlaciones te muestran qué activos se mueven juntos y en qué dirección. Operar activos altamente correlacionados al mismo tiempo multiplica el riesgo real sin que lo veas en el size.</p>
+
+                <!-- CORRELACIONES ACCIONES -->
+                <div class="stats-card" style="margin-bottom:1.5rem;">
+                    <h3 class="stats-title">📊 RENTA VARIABLE — CORRELACIONES CLAVE</h3>
+                    <div class="stats-metric"><span>SPY ↔ QQQ</span><span class="stat-value positive">+0.95 MUY ALTA</span></div>
+                    <div class="stats-metric" style="font-size:0.8rem;color:var(--text-gray);padding:4px 0 10px 0;border-bottom:1px solid rgba(255,255,255,0.05)"><span>Si operás SPY y QQQ al mismo tiempo, prácticamente doblás exposición al mismo riesgo.</span></div>
+                    <div class="stats-metric"><span>SPY ↔ VIX</span><span class="stat-value negative">−0.80 INVERSA ALTA</span></div>
+                    <div class="stats-metric" style="font-size:0.8rem;color:var(--text-gray);padding:4px 0 10px 0;border-bottom:1px solid rgba(255,255,255,0.05)"><span>Cuando el mercado cae, el miedo (VIX) sube. Útil para cobertura o como señal de alerta.</span></div>
+                    <div class="stats-metric"><span>AAPL ↔ MSFT</span><span class="stat-value positive">+0.88 MUY ALTA</span></div>
+                    <div class="stats-metric" style="font-size:0.8rem;color:var(--text-gray);padding:4px 0 10px 0;border-bottom:1px solid rgba(255,255,255,0.05)"><span>Ambas se mueven casi igual. Tener las dos abiertas no diversifica, concentra.</span></div>
+                    <div class="stats-metric"><span>AAPL ↔ TSLA</span><span class="stat-value" style="color:#d4af37">+0.55 MODERADA</span></div>
+                    <div class="stats-metric" style="font-size:0.8rem;color:var(--text-gray);padding:4px 0 10px 0;border-bottom:1px solid rgba(255,255,255,0.05)"><span>Correlación moderada por ser ambas tech. En risk-off se mueven juntas con más fuerza.</span></div>
+                    <div class="stats-metric"><span>Tech Sector ↔ Tasas 10Y</span><span class="stat-value negative">−0.70 INVERSA</span></div>
+                    <div class="stats-metric" style="font-size:0.8rem;color:var(--text-gray);padding:4px 0 10px 0;border-bottom:1px solid rgba(255,255,255,0.05)"><span>Cuando suben las tasas, las valuaciones tech comprimen. Monitorear siempre el TLT.</span></div>
+                    <div class="stats-metric"><span>Financials ↔ Tasas 10Y</span><span class="stat-value positive">+0.65 POSITIVA</span></div>
+                    <div class="stats-metric" style="font-size:0.8rem;color:var(--text-gray);padding:4px 0 10px 0"><span>Los bancos ganan más margen cuando suben las tasas. Correlación opuesta a tech.</span></div>
+                </div>
+
+                <!-- CORRELACIONES MACRO -->
+                <div class="stats-card" style="margin-bottom:1.5rem;">
+                    <h3 class="stats-title">🌐 MACRO — CORRELACIONES INTER-MERCADO</h3>
+                    <div class="stats-metric"><span>DXY (USD) ↔ Gold</span><span class="stat-value negative">−0.75 INVERSA</span></div>
+                    <div class="stats-metric" style="font-size:0.8rem;color:var(--text-gray);padding:4px 0 10px 0;border-bottom:1px solid rgba(255,255,255,0.05)"><span>Dólar fuerte = oro débil. Regla histórica con excepciones en crisis extremas.</span></div>
+                    <div class="stats-metric"><span>DXY (USD) ↔ Commodities</span><span class="stat-value negative">−0.65 INVERSA</span></div>
+                    <div class="stats-metric" style="font-size:0.8rem;color:var(--text-gray);padding:4px 0 10px 0;border-bottom:1px solid rgba(255,255,255,0.05)"><span>La mayoría de commodities cotizan en USD. Dólar sube = commodities bajan.</span></div>
+                    <div class="stats-metric"><span>Oil (WTI) ↔ CAD/USD</span><span class="stat-value positive">+0.80 ALTA</span></div>
+                    <div class="stats-metric" style="font-size:0.8rem;color:var(--text-gray);padding:4px 0 10px 0;border-bottom:1px solid rgba(255,255,255,0.05)"><span>Canadá exporta petróleo. El CAD sube y baja con el precio del crudo.</span></div>
+                    <div class="stats-metric"><span>Gold ↔ Bonos (TLT)</span><span class="stat-value positive">+0.60 POSITIVA</span></div>
+                    <div class="stats-metric" style="font-size:0.8rem;color:var(--text-gray);padding:4px 0 10px 0"><span>Ambos activos refugio. En risk-off se mueven juntos hacia arriba.</span></div>
+                </div>
+
+                <!-- CORRELACIONES CRYPTO -->
+                <div class="stats-card" style="margin-bottom:1.5rem;">
+                    <h3 class="stats-title">₿ CRYPTO — CORRELACIONES CLAVE</h3>
+                    <div class="stats-metric"><span>BTC ↔ ETH</span><span class="stat-value positive">+0.90 MUY ALTA</span></div>
+                    <div class="stats-metric" style="font-size:0.8rem;color:var(--text-gray);padding:4px 0 10px 0;border-bottom:1px solid rgba(255,255,255,0.05)"><span>ETH sigue a BTC casi siempre. Tener ambas abiertas casi no diversifica.</span></div>
+                    <div class="stats-metric"><span>BTC ↔ Altcoins</span><span class="stat-value positive">+0.75 a +0.95</span></div>
+                    <div class="stats-metric" style="font-size:0.8rem;color:var(--text-gray);padding:4px 0 10px 0;border-bottom:1px solid rgba(255,255,255,0.05)"><span>En bear market todas caen juntas. La "diversificación" crypto es ilusoria en crisis.</span></div>
+                    <div class="stats-metric"><span>BTC ↔ SPY (2020-hoy)</span><span class="stat-value" style="color:#d4af37">+0.45 CRECIENTE</span></div>
+                    <div class="stats-metric" style="font-size:0.8rem;color:var(--text-gray);padding:4px 0 10px 0"><span>Desde 2020 BTC se comporta más como activo de riesgo que como reserva de valor. En risk-off cae con las acciones.</span></div>
+                </div>
+
+                <!-- REGLA DE ORO -->
+                <div style="border:1px solid rgba(212,175,55,0.4); border-radius:4px; padding:20px; background:rgba(212,175,55,0.05);">
+                    <p style="font-family:Arial Narrow,sans-serif; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#d4af37; margin:0 0 10px 0;">⚔ REGLA OPERATIVA</p>
+                    <p style="font-size:13px; color:#9a9fb8; line-height:1.7; margin:0;">Si dos activos tienen correlación mayor a <strong style="color:#e0e4f0;">+0.70</strong>, tratarlos como una sola posición para calcular el riesgo real. Tu <strong style="color:#e0e4f0;">exposición efectiva</strong> es la suma de ambos sizes, no cada uno por separado. El apalancamiento oculto mata carteras.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="calc-widget" id="calcWidget" style="display: none;">
+        <div class="calc-header" onclick="toggleCalc()">
+            <span>🧮 CALCULADORA TÁCTICA</span>
+            <span id="calcIcon">▲</span>
+        </div>
+        <div class="calc-body">
+            
+            <div style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid var(--border-gray);">
+                <span style="color: var(--aurea-gold); font-size: 0.75rem; text-transform: uppercase; font-weight: bold;" id="calc-active-protocol">Protocolo Activo: Default</span>
+            </div>
+
+            <div class="calc-group">
+                <label class="calc-label">Estado de la Mesa</label>
+                <select class="calc-select" id="calc-status">
+                    <option value="normal">🟢 NORMAL (Riesgo Base)</option>
+                    <option value="drawdown">🟡 RECOVERY (Riesgo Reducido)</option>
+                    <option value="tier2">🟠 TIER-2 ILÍQUIDO (Riesgo Mínimo)</option>
+                </select>
+            </div>
+
+            <div class="calc-group">
+                <label class="calc-label">Dirección</label>
+                <select class="calc-select" id="calc-direction">
+                    <option value="long">📈 LONG (Compra)</option>
+                    <option value="short">📉 SHORT (Venta)</option>
+                </select>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <div class="calc-group">
+                    <label class="calc-label">Entrada ($)</label>
+                    <input type="number" class="calc-input" id="calc-entry" step="0.00000001">
+                </div>
+                <div class="calc-group">
+                    <label class="calc-label" id="label-calc-stop">Stop Estructural ($)</label>
+                    <input type="number" class="calc-input" id="calc-stop" step="0.00000001">
+                </div>
+            </div>
+
+            <div class="calc-group" id="group-calc-atr" style="display: none;">
+                <label class="calc-label">Volatilidad: ATR(14)</label>
+                <input type="number" class="calc-input" id="calc-atr" step="0.00000001">
+            </div>
+
+            <div class="calc-group">
+                <label class="calc-label">Target / TP (Opcional para R:R)</label>
+                <input type="number" class="calc-input" id="calc-tp" step="0.00000001">
+            </div>
+
+            <button class="calc-btn" onclick="executeCalc()">⚡ CALCULAR SIZE</button>
+            <div class="calc-result" id="calcResult"></div>
+        </div>
+    </div>
+
+    <div id="lockdown-overlay">
+        <div class="lockdown-text">🚨 CIRCUIT BREAKER ACTIVO 🚨</div>
+        <p class="lockdown-subtitle">La mesa está cerrada por protección de capital.</p>
+        <div class="lockdown-timer" id="lockdown-timer">23:59:59</div>
+        <button class="emergency-override-btn" onclick="emergencyOverride()">🔓 Override de Emergencia</button>
+    </div>
+
+    <script>
+        // --- MANEJO DE VISTAS Y AUTH ---
+        const TEST_EMAIL = '12345@gmail.com'; const TEST_PASSWORD = '12345';
+        let isLoginMode = true;
+
+        function showLanding() { document.getElementById('landing-page').style.display = 'block'; document.getElementById('login-page').style.display = 'none'; document.getElementById('dashboard-page').style.display = 'none'; document.getElementById('calcWidget').style.display = 'none'; window.scrollTo(0,0); }
+        function showLogin() { document.getElementById('landing-page').style.display = 'none'; document.getElementById('login-page').style.display = 'flex'; document.getElementById('dashboard-page').style.display = 'none'; document.getElementById('calcWidget').style.display = 'none'; window.scrollTo(0,0); }
+        function showDashboard(email) { document.getElementById('landing-page').style.display = 'none'; document.getElementById('login-page').style.display = 'none'; document.getElementById('dashboard-page').style.display = 'block'; document.getElementById('calcWidget').style.display = 'block'; document.getElementById('user-email-display').textContent = email; localStorage.setItem('aurea_session', email); window.scrollTo(0,0); }
+        
+        function toggleAuthMode() {
+            isLoginMode = !isLoginMode;
+            document.getElementById('auth-title').innerText = isLoginMode ? 'ACCESO AL SISTEMA' : 'CREAR CUENTA';
+            document.getElementById('auth-submit-btn').innerText = isLoginMode ? 'INGRESAR' : 'REGISTRARME';
+            document.getElementById('auth-switch-text').innerHTML = isLoginMode ? '¿No tienes cuenta? <a href="#" onclick="toggleAuthMode(); return false;">Regístrate aquí</a>' : '¿Ya tienes cuenta? <a href="#" onclick="toggleAuthMode(); return false;">Inicia sesión</a>';
+        }
+
+        function handleSocialAuth(provider) {
+            if(provider === 'Google') { window.firebaseGoogleLogin(); }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-password').value;
+            window.firebaseEmailLogin(email, pass, !isLoginMode);
+        }
+        
+        function handleLogout() { if(confirm('¿Cerrar sesión?')) { window.firebaseLogout ? window.firebaseLogout() : (localStorage.removeItem('aurea_session'), showLanding()); } }
+        function switchDashboardTab(tName) { document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active')); document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active')); document.getElementById('tab-'+tName).classList.add('active'); event.target.classList.add('active'); if(tName==='protocol') populateProtocolForm(); }
+        function toggleFAQ(el) { const a = el.nextElementSibling; const t = el.querySelector('.faq-toggle'); a.classList.toggle('active'); t.textContent = a.classList.contains('active') ? '−' : '+'; }
+
+        // --- SISTEMA CONFIGURABLE: MI PROTOCOLO ---
+        const DEFAULT_PROTOCOL = {
+            risk: { base: 0.15, recovery: 0.10, dailyLimit: 0.30 },
+            stopMethod: { type: 'atr', atrMultiplier: 0.5, percentStop: 2 },
+            takeProfit: { minRR: 2.0 },
+            style: { protocolName: 'Mi Sistema Institucional' }
+        };
+
+        function loadProtocol() { const s = localStorage.getItem('aurea_protocol'); return s ? JSON.parse(s) : DEFAULT_PROTOCOL; }
+        function saveProtocolToStorage(p) { localStorage.setItem('aurea_protocol', JSON.stringify(p)); }
+        function getUserProtocol() { return loadProtocol(); }
+
+        function populateProtocolForm() {
+            const p = loadProtocol();
+            document.getElementById('cfg-nw').value = localStorage.getItem('cfg-nw') || 20000;
+            document.getElementById('cfg-risk-base').value = p.risk.base;
+            document.getElementById('cfg-risk-recovery').value = p.risk.recovery;
+            document.getElementById('cfg-daily-limit').value = p.risk.dailyLimit;
+            document.getElementById('cfg-protocol-name').value = p.style.protocolName;
+            
+            document.querySelectorAll('input[name="stop-method"]').forEach(r => { r.checked = (r.value === p.stopMethod.type); r.parentElement.classList.toggle('active', r.checked); });
+            document.getElementById('cfg-atr-multiplier').value = p.stopMethod.atrMultiplier;
+            document.getElementById('cfg-percent-stop').value = p.stopMethod.percentStop;
+            document.getElementById('cfg-min-rr').value = p.takeProfit.minRR;
+            
+            updateRiskDisplay(); updateCalcUI();
+        }
+
+        function selectStopMethod(method) {
+            document.querySelectorAll('.config-radio-option').forEach(o => o.classList.remove('active'));
+            const radio = document.getElementById('stop-' + method);
+            radio.checked = true; radio.parentElement.classList.add('active');
+        }
+
+        function saveProtocol() {
+            const p = {
+                risk: { base: parseFloat(document.getElementById('cfg-risk-base').value), recovery: parseFloat(document.getElementById('cfg-risk-recovery').value), dailyLimit: parseFloat(document.getElementById('cfg-daily-limit').value) },
+                stopMethod: { type: document.querySelector('input[name="stop-method"]:checked').value, atrMultiplier: parseFloat(document.getElementById('cfg-atr-multiplier').value), percentStop: parseFloat(document.getElementById('cfg-percent-stop').value) },
+                takeProfit: { minRR: parseFloat(document.getElementById('cfg-min-rr').value) },
+                style: { protocolName: document.getElementById('cfg-protocol-name').value }
+            };
+            saveProtocolToStorage(p); alert('✅ Configuración guardada. La calculadora ya está usando tus reglas.'); updateCalcUI();
+        }
+        function resetProtocol() { if(confirm('¿Volver a default?')){ saveProtocolToStorage(DEFAULT_PROTOCOL); populateProtocolForm(); } }
+
+        function updateRiskDisplay() {
+            const nw = parseFloat(document.getElementById('cfg-nw').value) || 0; const p = getUserProtocol(); const riskUSD = nw * (p.risk.base / 100);
+            const disp = document.getElementById('risk-display'); if(disp) disp.innerText = `= $${riskUSD.toFixed(2)} por trade`;
+            localStorage.setItem('cfg-nw', nw);
+        }
+        document.getElementById('cfg-nw').addEventListener('change', updateRiskDisplay);
+
+        // --- CALCULADORA V3 (Agnóstica) ---
+        function updateCalcUI() {
+            const p = getUserProtocol();
+            document.getElementById('calc-active-protocol').innerText = `Protocolo: ${p.style.protocolName}`;
+            const atrGroup = document.getElementById('group-calc-atr'); const stopLabel = document.getElementById('label-calc-stop'); const stopInput = document.getElementById('calc-stop');
+            
+            if (p.stopMethod.type === 'atr') { atrGroup.style.display = 'block'; stopLabel.innerText = 'Stop Estructural ($)'; stopInput.disabled = false; stopInput.placeholder="102.00"; } 
+            else if (p.stopMethod.type === 'percent') { atrGroup.style.display = 'none'; stopLabel.innerText = 'Stop (Auto Calculado)'; stopInput.disabled = true; stopInput.placeholder="Automático"; stopInput.value=""; } 
+            else { atrGroup.style.display = 'none'; stopLabel.innerText = 'Hard Stop Manual ($)'; stopInput.disabled = false; stopInput.placeholder="102.00"; }
+        }
+
+        function toggleCalc() { const w = document.getElementById('calcWidget'); const i = document.getElementById('calcIcon'); w.classList.toggle('open'); i.innerText = w.classList.contains('open') ? '▼' : '▲'; if(w.classList.contains('open')) updateCalcUI(); }
+
+        function executeCalc() {
+            const p = getUserProtocol();
+            const nw = parseFloat(document.getElementById('cfg-nw').value) || 20000;
+            const status = document.getElementById('calc-status').value;
+            let activeRiskPct = (status === 'drawdown') ? p.risk.recovery : ((status === 'tier2') ? 0.075 : p.risk.base);
+            const riskDollars = nw * (activeRiskPct / 100);
+
+            const direction = document.getElementById('calc-direction').value;
+            const entry = parseFloat(document.getElementById('calc-entry').value);
+            const tp = parseFloat(document.getElementById('calc-tp').value) || 0;
+            let manualStop = parseFloat(document.getElementById('calc-stop').value) || 0;
+            const atr = parseFloat(document.getElementById('calc-atr').value) || 0;
+
+            if(!entry) return alert("⚠️ Ingresa el precio de entrada.");
+
+            let hardStop = 0; let bufferInfo = "";
+
+            if (p.stopMethod.type === 'atr') {
+                if(!manualStop) return alert("⚠️ En modo ATR indica el Stop Estructural.");
+                let buffer = (atr > 0) ? atr * p.stopMethod.atrMultiplier : 0;
+                hardStop = (direction === 'long') ? (manualStop - buffer) : (manualStop + buffer);
+                bufferInfo = (buffer>0) ? `Buffer ATR (${p.stopMethod.atrMultiplier}x): ±$${buffer.toFixed(4)}` : "Sin Buffer (ATR=0)";
+            } else if (p.stopMethod.type === 'percent') {
+                const dist = entry * (p.stopMethod.percentStop / 100);
+                hardStop = (direction === 'long') ? (entry - dist) : (entry + dist);
+                document.getElementById('calc-stop').value = hardStop.toFixed(4);
+                bufferInfo = `Stop Fijo Automático: ${p.stopMethod.percentStop}%`;
+            } else {
+                if(!manualStop) return alert("⚠️ En modo Manual indica el Hard Stop.");
+                hardStop = manualStop; bufferInfo = "Stop Manual (Sin Buffer matemático)";
+            }
+
+            if ((direction==='long' && hardStop>=entry) || (direction==='short' && hardStop<=entry)) return alert("⚠️ ERROR: El Stop Loss está del lado equivocado.");
+
+            const distance = Math.abs(entry - hardStop);
+            const size = riskDollars / distance;
+            const exposure = size * entry;
+
+            let rrHtml = '';
+            if(tp > 0) {
+                if ((direction==='long' && tp<=entry) || (direction==='short' && tp>=entry)) return alert("⚠️ ERROR: El Take Profit está del lado equivocado.");
+                const rr = Math.abs(tp - entry) / distance; const minRR = p.takeProfit.minRR;
+                let rrStatus = (rr >= minRR) ? '✅ APROBADO' : '⚠️ RECHAZADO';
+                let rrColor = (rr >= minRR) ? 'var(--success-green)' : 'var(--danger-red)';
+                rrHtml = `<p style="margin-top:10px; border-top:1px solid var(--border-gray); padding-top:10px;"><span>R:R Ratio:</span><span style="color:${rrColor}; font-weight:bold;">1:${rr.toFixed(2)} ${rrStatus}</span></p><p style="font-size:0.75rem; color:var(--text-gray);">Mínimo Exigido: 1:${minRR}</p>`;
+                if(rr < minRR) rrHtml += `<div style="margin-top:10px; padding:10px; background:rgba(255,68,68,0.1); border-left:3px solid var(--danger-red); font-size:0.8rem; color:var(--danger-red);"><strong>MESA CERRADA:</strong> No cumple el R:R mínimo de tu protocolo. Buscá otro setup.</div>`;
+            }
+
+            document.getElementById('calcResult').innerHTML = `
+                <p><span>Riesgo Máximo:</span><span style="color:var(--danger-red); font-weight:bold;">$${riskDollars.toFixed(2)}</span></p>
+                <p><span>Hard Stop Final:</span><span style="color:var(--aurea-gold); font-weight:bold;">$${hardStop.toFixed(4)}</span></p>
+                <p><span style="font-size:0.8rem; color:var(--warning-yellow);">${bufferInfo}</span></p>
+                <p style="margin-top:15px; border-top:1px solid var(--border-gray); padding-top:15px; flex-direction:column; align-items:flex-start;"><span style="font-size:0.7rem; color:var(--text-gray);">TAMAÑO EXACTO A OPERAR</span><span class="highlight" style="font-size:1.3rem;">${size.toFixed(4)} UNIDADES</span></p>
+                <p style="flex-direction:column; align-items:flex-start;"><span style="font-size:0.7rem; color:var(--text-gray);">Exposición Nocional</span><span style="color:white; font-weight:bold;">$${exposure.toLocaleString('en-US', {maximumFractionDigits:2})}</span></p>
+                ${rrHtml}
+            `;
+            document.getElementById('calcResult').style.display = 'block';
+        }
+
+        // --- MATRIZ CORRELACIÓN ---
+        function addCorrelationRow() {
+            const a1 = document.getElementById('corr-asset1').value.toUpperCase(), a2 = document.getElementById('corr-asset2').value.toUpperCase(), corr = parseFloat(document.getElementById('corr-value').value);
+            if(!a1||!a2||isNaN(corr)) return alert('Completar campos');
+            let stat = corr>0.7 ? '❌ BLOQUEADO' : (corr<-0.6 ? '✅ HEDGE' : '✅ INDEP'), cls = corr>0.7 ? 'status-critical' : (corr<-0.6 ? 'status-active' : ''), tc = corr>0.7 ? 'text-red' : (corr<-0.6 ? 'text-green' : '');
+            document.getElementById('correlation-tbody').insertRow(0).innerHTML = `<td>${a1}/${a2}</td><td class="${tc}">${corr>0?'+':''}${corr}</td><td><span class="status-badge ${cls}">${stat}</span></td>`;
+        }
+
+        // --- CIRCUIT BREAKER ---
+        let timerInterval;
+        function checkLockdown() { const t = localStorage.getItem('aurea_lockdown'); if(t && Date.now() < parseInt(t)) activateLockdownUI(parseInt(t)); }
+        function triggerPanic() { if(confirm("⚠️ BLOQUEAR MESA 24HS\nIrreversible sin password.")) { const u = Date.now()+(24*3600*1000); localStorage.setItem('aurea_lockdown', u); activateLockdownUI(u); } }
+        function activateLockdownUI(uTime) {
+            document.getElementById('lockdown-overlay').classList.add('active'); document.getElementById('calcWidget').style.display='none';
+            timerInterval = setInterval(() => {
+                const dist = uTime - Date.now();
+                if(dist < 0) { clearInterval(timerInterval); document.getElementById('lockdown-overlay').classList.remove('active'); document.getElementById('calcWidget').style.display='block'; localStorage.removeItem('aurea_lockdown'); return; }
+                const h = Math.floor((dist % 86400000)/3600000), m = Math.floor((dist % 3600000)/60000), s = Math.floor((dist % 60000)/1000);
+                document.getElementById('lockdown-timer').innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+            }, 1000);
+        }
+        function emergencyOverride() { if(prompt("🔐 PASSWORD DE EMERGENCIA:") === "aurea trading") { localStorage.removeItem('aurea_lockdown'); clearInterval(timerInterval); document.getElementById('lockdown-overlay').classList.remove('active'); document.getElementById('calcWidget').style.display='block'; alert("Mesa desbloqueada."); } }
+
+        // --- ESTADISTICAS Y CSV ---
+        let tStats = { trades:[], total:0, w:0, l:0, rw:0, rl:0 };
+        function loadStats() { const s = localStorage.getItem('aurea_stats'); if(s) { tStats = JSON.parse(s); updateStatsUI(); } }
+        function registerTrade() {
+            const r = parseFloat(document.getElementById('trade-result-r').value); if(isNaN(r)||r===0) return;
+            tStats.trades.unshift({r:r, n:document.getElementById('trade-notes').value, d:new Date().toLocaleDateString()});
+            tStats.total++; r>0 ? (tStats.w++, tStats.rw+=r) : (tStats.l++, tStats.rl+=Math.abs(r));
+            localStorage.setItem('aurea_stats', JSON.stringify(tStats)); updateStatsUI();
+        }
+        function updateStatsUI() {
+            document.getElementById('kpi-total').innerText = tStats.total;
+            document.getElementById('kpi-wins').innerText = tStats.w;
+            document.getElementById('kpi-losses').innerText = tStats.l;
+            document.getElementById('kpi-winrate').innerText = tStats.total>0 ? ((tStats.w/tStats.total)*100).toFixed(1)+'%' : '0%';
+
+            const avgW = tStats.w>0 ? tStats.rw/tStats.w : 0;
+            const avgL = tStats.l>0 ? tStats.rl/tStats.l : 0;
+            const payoff = avgL>0 ? (avgW/avgL).toFixed(2) : 0;
+            const netR = tStats.rw - tStats.rl;
+            const pf = tStats.rl>0 ? (tStats.rw/tStats.rl).toFixed(2) : tStats.rw>0 ? '∞' : '0.00';
+
+            // Calcular drawdown máximo, rachas, mejor/peor trade
+            let maxDD=0, equity=0, peak=0, curRun=0, bestStreak=0, worstStreak=0, bestT=-Infinity, worstT=Infinity;
+            const tradesAsc = [...tStats.trades].reverse();
+            tradesAsc.forEach(t => {
+                equity += t.r;
+                if(equity > peak) peak = equity;
+                const dd = peak - equity;
+                if(dd > maxDD) maxDD = dd;
+                if(t.r > 0) { curRun = curRun>=0 ? curRun+1 : 1; if(curRun>bestStreak) bestStreak=curRun; }
+                else { curRun = curRun<=0 ? curRun-1 : -1; if(Math.abs(curRun)>worstStreak) worstStreak=Math.abs(curRun); }
+                if(t.r > bestT) bestT = t.r;
+                if(t.r < worstT) worstT = t.r;
+            });
+
+            // KPIs nuevos
+            const pfEl = document.getElementById('kpi-pf');
+            if(pfEl) { pfEl.innerText = pf; pfEl.className = 'kpi-value '+(parseFloat(pf)>=1.5?'positive':parseFloat(pf)<1?'negative':''); }
+            const maxDDel = document.getElementById('kpi-maxdd');
+            if(maxDDel) maxDDel.innerText = maxDD.toFixed(2)+'R';
+
+            // Cards existentes + nuevas
+            document.getElementById('stat-net-r').innerText = netR.toFixed(2)+'R';
+            document.getElementById('stat-net-r').className = netR>0 ? 'stat-value positive' : 'stat-value negative';
+            document.getElementById('stat-payoff').innerText = payoff;
+
+            const awEl=document.getElementById('stat-avg-win'); if(awEl) awEl.innerText='+'+avgW.toFixed(2)+'R';
+            const alEl=document.getElementById('stat-avg-loss'); if(alEl) alEl.innerText='-'+avgL.toFixed(2)+'R';
+            const pfEl2=document.getElementById('stat-pf'); if(pfEl2){ pfEl2.innerText=pf; pfEl2.className=parseFloat(pf)>=1.5?'stat-value positive':parseFloat(pf)<1?'stat-value negative':'stat-value'; }
+            const bEl=document.getElementById('stat-best'); if(bEl) bEl.innerText=(bestT>-Infinity?'+'+bestT.toFixed(2):'0.00')+'R';
+            const wEl=document.getElementById('stat-worst'); if(wEl) wEl.innerText=(worstT<Infinity?worstT.toFixed(2):'0.00')+'R';
+            const csEl=document.getElementById('stat-current-streak'); if(csEl){ csEl.innerText=(curRun>=0?'+':'')+curRun; csEl.className=curRun>0?'stat-value positive':curRun<0?'stat-value negative':'stat-value'; }
+            const bsEl=document.getElementById('stat-best-streak'); if(bsEl) bsEl.innerText='+'+bestStreak;
+            const wsEl=document.getElementById('stat-worst-streak'); if(wsEl) wsEl.innerText='-'+worstStreak;
+            const mdEl=document.getElementById('stat-maxdd'); if(mdEl) mdEl.innerText=maxDD.toFixed(2)+'R';
+
+            const expEl = document.getElementById('stat-expectancy');
+            if(expEl){ const exp=tStats.total>0?((tStats.w/tStats.total)*avgW-(tStats.l/tStats.total)*avgL):0; expEl.innerText=exp.toFixed(3)+'R'; expEl.className=exp>0?'stat-value positive':'stat-value negative'; }
+
+            document.getElementById('trade-history-body').innerHTML = tStats.trades.slice(0,10).map((t,i)=>`<tr><td>#${tStats.total-i}</td><td style="color:${t.r>0?'var(--success-green)':'var(--danger-red)'}">${t.r>0?'+':''}${t.r}R</td><td>${t.n}</td><td>${t.d}</td></tr>`).join('');
+
+            // ── Resumen Panel General ──
+            const ovWr=document.getElementById('ov-winrate'), ovPnl=document.getElementById('ov-pnl'), ovPf=document.getElementById('ov-pf'), ovSt=document.getElementById('ov-streak'), ovTr=document.getElementById('ov-trades');
+            if(ovWr && tStats.total > 0) {
+                const wr=((tStats.w/tStats.total)*100).toFixed(1)+'%', pnl=(tStats.rw-tStats.rl).toFixed(2)+'R', pf=tStats.rl>0?(tStats.rw/tStats.rl).toFixed(2):tStats.rw>0?'∞':'0.00';
+                let curRun=0; [...tStats.trades].reverse().forEach(t=>{ if(t.r>0) curRun=curRun>=0?curRun+1:1; else curRun=curRun<=0?curRun-1:-1; });
+                const streak=(curRun>=0?'+':'')+curRun;
+                ovWr.innerText=wr; ovWr.style.color=tStats.w/tStats.total>=0.5?'var(--success-green)':'var(--danger-red)';
+                ovPnl.innerText=pnl; ovPnl.style.color=parseFloat(pnl)>=0?'var(--success-green)':'var(--danger-red)';
+                ovPf.innerText=pf; ovPf.style.color=parseFloat(pf)>=1.5?'var(--success-green)':parseFloat(pf)<1?'var(--danger-red)':'var(--aurea-gold)';
+                ovSt.innerText=streak; ovSt.style.color=curRun>0?'var(--success-green)':curRun<0?'var(--danger-red)':'var(--aurea-gold)';
+                if(ovTr) ovTr.innerText=tStats.total+' trades registrados — '+new Date().toLocaleTimeString();
+            } else if(ovWr) {
+                [ovWr,ovPnl,ovPf,ovSt].forEach(el=>{el.innerText='—'; el.style.color='var(--text-gray)';});
+                if(ovTr) ovTr.innerText='Sin trades registrados aún.';
+            }
+        }
+        function resetStats() { if(confirm("¿Borrar historial?")) { tStats={trades:[],total:0,w:0,l:0,rw:0,rl:0}; localStorage.removeItem('aurea_stats'); updateStatsUI(); document.getElementById('trade-history-body').innerHTML=''; } }
+
+        function exportStats() {
+            if (tStats.trades.length === 0) return alert('⚠️ No hay trades para exportar');
+            let csv = 'Fecha,Resultado_R,Notas\n';
+            tStats.trades.forEach(t => {
+                const date = t.d || new Date().toLocaleDateString();
+                const result = t.r || 0;
+                const notes = (t.n || '').replace(/,/g, ';');
+                csv += `${date},${result},${notes}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `aurea-trades-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importStats() { document.getElementById('csv-file-input').click(); }
+
+        function handleCSVImport(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const lines = e.target.result.split('\n').filter(l => l.trim());
+                    if (lines.length < 2) throw new Error('Archivo vacío o sin datos');
+                    const imported = [];
+                    for (let i = 1; i < lines.length; i++) {
+                        const cols = lines[i].split(',');
+                        if (cols.length < 2) continue;
+                        const date = cols[0];
+                        const rVal = parseFloat(cols[1]);
+                        const notes = cols[2] || '';
+                        if (!isNaN(rVal)) imported.push({ d: date, r: rVal, n: notes });
+                    }
+                    if (imported.length === 0) throw new Error('No se encontraron trades válidos');
+                    if (confirm(`📥 IMPORTAR ${imported.length} TRADES\n\n¿Reemplazar estadísticas actuales?`)) {
+                        tStats.trades = imported; tStats.total = imported.length;
+                        tStats.w = imported.filter(t => t.r > 0).length; tStats.l = imported.filter(t => t.r < 0).length;
+                        tStats.rw = imported.filter(t => t.r > 0).reduce((sum, t) => sum + t.r, 0);
+                        tStats.rl = Math.abs(imported.filter(t => t.r < 0).reduce((sum, t) => sum + t.r, 0));
+                        localStorage.setItem('aurea_stats', JSON.stringify(tStats)); updateStatsUI();
+                        alert('✅ ' + imported.length + ' trades importados correctamente');
+                    }
+                } catch (err) { alert('❌ Error al importar CSV\n\n' + err.message); }
+                event.target.value = '';
+            };
+            reader.readAsText(file);
+        }
+
+        // --- API PRECIOS & DATOS ---
+        const PROXY = 'https://corsproxy.io/?';
+        const priceCache = {};
+        const CACHE_DURATION = 15000;
+
+        const fw = (url, ms=8000) => Promise.race([
+            fetch(PROXY + encodeURIComponent(url)),
+            new Promise((_,r) => setTimeout(() => r(new Error('Timeout')), ms))
+        ]);
+
+        // ── CRYPTO: Binance directo → allorigins → Yahoo ──────────
+        async function fetchCryptoPrice(s) {
+            // 1. Binance directo
+            try {
+                const r = await Promise.race([
+                    fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${s}USDT`),
+                    new Promise((_,rej) => setTimeout(() => rej(new Error('Timeout')), 6000))
+                ]);
+                const d = await r.json();
+                if(d.price) { console.log(`[AUREA] ✅ Binance → ${s}`); return parseFloat(d.price); }
+                throw new Error('Sin datos');
+            } catch(e1) {
+                console.warn(`[AUREA] Binance directo falló para ${s}`);
+            }
+            // 2. Binance vía allorigins
+            try {
+                const r = await Promise.race([
+                    fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent('https://api.binance.com/api/v3/ticker/price?symbol='+s+'USDT')}`),
+                    new Promise((_,rej) => setTimeout(() => rej(new Error('Timeout')), 6000))
+                ]);
+                const d = await r.json();
+                if(d.price) { console.log(`[AUREA] ✅ Binance/allorigins → ${s}`); return parseFloat(d.price); }
+                throw new Error('Sin datos');
+            } catch(e2) {
+                console.warn(`[AUREA] Binance/allorigins falló para ${s}`);
+            }
+            // 3. Yahoo Finance
+            const r = await fw(`https://query1.finance.yahoo.com/v8/finance/chart/${s}-USD?interval=1d&range=1d`);
+            const d = await r.json();
+            const price = d?.chart?.result?.[0]?.meta?.regularMarketPrice;
+            if(price > 0) { console.log(`[AUREA] ✅ Yahoo Crypto → ${s}`); return price; }
+            throw new Error(`${s} no encontrado en ninguna fuente`);
+        }
+
+        async function fetchCryptoATR(s) {
+            try {
+                const r = await Promise.race([
+                    fetch(`https://api.binance.com/api/v3/klines?symbol=${s}USDT&interval=1d&limit=14`),
+                    new Promise((_,rej) => setTimeout(() => rej(new Error('Timeout')), 6000))
+                ]);
+                const d = await r.json();
+                let tr=0; d.forEach(c => tr += (parseFloat(c[2]) - parseFloat(c[3]))); return tr / d.length;
+            } catch(e) { return null; }
+        }
+
+        // ── STOCKS: Yahoo principal → Twelve Data respaldo ────────
+        async function fetchStockPriceWithFallback(s) {
+            // 1. Yahoo Finance
+            try {
+                const r = await fw(`https://query1.finance.yahoo.com/v8/finance/chart/${s}?interval=1d&range=1d`);
+                const d = await r.json();
+                const price = d?.chart?.result?.[0]?.meta?.regularMarketPrice;
+                if(price > 0) { console.log(`[AUREA] ✅ Yahoo → ${s}`); return price; }
+                throw new Error('Sin datos');
+            } catch(e1) {
+                console.warn(`[AUREA] Yahoo falló para ${s}: ${e1.message}`);
+            }
+            // 2. Twelve Data
+            try {
+                const TWELVE_KEY = '6f2170b36266444d9781d89ee10a44ba';
+                const r = await fw(`https://api.twelvedata.com/price?symbol=${s}&apikey=${TWELVE_KEY}`);
+                const d = await r.json();
+                if(d.price && !d.code) { console.log(`[AUREA] ✅ Twelve → ${s}`); return parseFloat(d.price); }
+                throw new Error('Sin datos');
+            } catch(e2) {
+                console.warn(`[AUREA] Twelve falló para ${s}: ${e2.message}`);
+            }
+            throw new Error(`El símbolo ${s} no se encontró en ninguna fuente.`);
+        }
+
+        async function fetchPrice() {
+            const symInput = document.getElementById('calc-symbol'); 
+            const sym = symInput.value.trim().toUpperCase(); 
+            if(!sym) { aureaToast('⚠️ Ingresá un ticker (Ej: BTC o AAPL).', 'warning'); return; }
+            
+            const btn = symInput.nextElementSibling; 
+            btn.innerHTML = '⏳...'; btn.disabled = true;
+            
+            const isCrypto = ['BTC','ETH','SOL','AVAX','MATIC','DOT','LINK','ADA','XRP','UNI','AAVE', 'DOGE', 'SHIB', 'NEAR', 'ARB', 'PEPE', 'WLD', 'SUI', 'APT', 'INJ', 'TIA', 'SEI', 'RNDR', 'FET', 'OP'].includes(sym);
+            
+            // 1️⃣ DIBUJAR GRÁFICO SIEMPRE
+            const tvSymbol = isCrypto ? `BINANCE:${sym}USDT` : sym;
+            if (typeof TradingView !== 'undefined') {
+                document.getElementById('tradingview_aurea').innerHTML = ''; 
+                new TradingView.widget({
+                    "autosize": true,
+                    "symbol": tvSymbol,
+                    "interval": "D",
+                    "timezone": "America/Argentina/Buenos_Aires",
+                    "theme": "dark",
+                    "style": "1",
+                    "locale": "es",
+                    "enable_publishing": false,
+                    "allow_symbol_change": true,
+                    "backgroundColor": "#0a0a0a",
+                    "gridColor": "#1a1a1a",
+                    "hide_top_toolbar": false,
+                    "hide_legend": false,
+                    "save_image": false,
+                    "container_id": "tradingview_aurea",
+                    "toolbar_bg": "#0a0a0a"
+                });
+            }
+
+            // 2️⃣ BUSCAR EL PRECIO CON REDUNDANCIA
+            try {
+                const cacheKey = `price_${sym}`;
+                let finalPrice = null; let finalAtr = null;
+
+                if (priceCache[cacheKey] && Date.now() - priceCache[cacheKey].timestamp < CACHE_DURATION) {
+                    finalPrice = priceCache[cacheKey].price; finalAtr = priceCache[cacheKey].atr;
+                } else {
+                    finalPrice = isCrypto ? await fetchCryptoPrice(sym) : await fetchStockPriceWithFallback(sym);
+                    finalAtr = isCrypto ? await fetchCryptoATR(sym) : null; 
+                    priceCache[cacheKey] = { price: finalPrice, atr: finalAtr, timestamp: Date.now() };
+                }
+                
+                document.getElementById('calc-entry').value = finalPrice.toFixed(4); 
+                if(finalAtr && document.getElementById('group-calc-atr').style.display !== 'none') {
+                    document.getElementById('calc-atr').value = finalAtr.toFixed(4);
+                }
+                
+                symInput.style.borderColor = 'var(--success-green)';
+                setTimeout(() => symInput.style.borderColor = 'var(--border-gray)', 2000);
+
+            } catch(e) { 
+                console.error("⛔ Error Crítico de Precio:", e);
+                symInput.style.borderColor = 'var(--warning-yellow)';
+                setTimeout(() => symInput.style.borderColor = 'var(--border-gray)', 2000);
+                
+                aureaToast('⚠️ APIs de precios no disponibles. Mirá el precio en el gráfico e ingresalo manualmente en la celda Entrada.', 'warning');
+            } finally { 
+                btn.innerHTML = 'OBTENER'; btn.disabled = false; 
+            }
+        }
+
+        function addSymbolInput() {
+            const cb = document.querySelector('.calc-body'); 
+            const d = document.createElement('div'); d.className='calc-group'; d.style='margin-bottom:15px; border-bottom:1px dashed var(--border-gray); padding-bottom:15px;';
+            d.innerHTML = `<label class="calc-label">📡 Cotización en Vivo</label><div style="display:flex;gap:5px"><input type="text" id="calc-symbol" class="calc-input" placeholder="TICKER (Ej: BTC, AAPL)" style="text-transform:uppercase; font-weight:bold;"><button class="calc-btn" onclick="fetchPrice()" style="margin:0;padding:8px; font-size: 0.8rem;">OBTENER</button></div><small style="display: block; margin-top: 5px; font-size: 0.7rem; color: var(--text-gray);"><span style="color:var(--success-green)">● Crypto</span> (Binance + Yahoo) | <span style="color:var(--aurea-gold)">● Stocks</span> (Yahoo + Twelve Data)</small>`;
+            cb.insertBefore(d, cb.firstChild);
+            setTimeout(() => { const input = document.getElementById('calc-symbol'); if(input) input.addEventListener('keypress', function(e) { if (e.key === 'Enter') { e.preventDefault(); fetchPrice(); } }); }, 500);
+        }
+
+
+        // ── TOAST (reemplaza alert en flujo de precios) ───────────
+        function aureaToast(msg, type='success') {
+            const existing = document.getElementById('aurea-toast');
+            if(existing) existing.remove();
+            const colors = {success:'#00b86a', warning:'#d4af37', error:'#e53935'};
+            const color = colors[type] || colors.success;
+            const t = document.createElement('div');
+            t.id = 'aurea-toast';
+            t.style.cssText = `position:fixed;bottom:30px;right:30px;z-index:9999;background:rgba(10,12,16,0.97);border:1px solid ${color};border-left:3px solid ${color};color:#e0e4f0;padding:14px 20px;border-radius:4px;font-family:'Segoe UI',sans-serif;font-size:13px;max-width:360px;line-height:1.5;box-shadow:0 4px 20px rgba(0,0,0,0.5);`;
+            t.innerHTML = msg;
+            document.body.appendChild(t);
+            setTimeout(()=>t.remove(), 4000);
+        }
+
+        // --- INIT ---
+        window.addEventListener('load', () => {
+            if(!localStorage.getItem('aurea_protocol')) saveProtocolToStorage(DEFAULT_PROTOCOL);
+            // Sesión manejada por Firebase onAuthStateChanged
+            populateProtocolForm(); updateRiskDisplay(); checkLockdown(); addSymbolInput(); loadStats();
+            console.log('%cAUREA BLACK BOX V5 MASTER', 'background:#d4af37; color:#000; padding:5px; font-weight:bold;');
+        });
+    </script>
+</body>
+</html>
